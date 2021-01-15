@@ -1,0 +1,10 @@
+unit MPF.Types;
+interface
+
+//==============================================================================
+type
+  TBoolOperationType = (_OR, _AND);
+
+implementation
+
+end.

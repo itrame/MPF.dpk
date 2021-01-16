@@ -1,1 +1,7 @@
-win32\debug\*.dcu
+*.dcu
+Win32/Debug/_MPF.Converters.dcu
+Win32/Debug/MPF.Arrays.dcu
+Win32/Debug/MPF.Connections.dcu
+Win32/Debug/MPF.Converters.dcu
+Win32/Debug/MPF.Matrices.dcu
+Win32/Debug/MPF.Types.dcu

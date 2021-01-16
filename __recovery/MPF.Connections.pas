@@ -19,6 +19,10 @@ type
   end;
 
 //------------------------------------------------------------------------------
+  IConnection = interface['{1B0B63CB-7407-4B8B-961D-42B9589FCDC3}']
+    procedure Send(const AData: TArray<Boolean>);
+    function Receive(const ACount: Integer): TArray<Byte>;
+  end;
 
 //==============================================================================
 implementation

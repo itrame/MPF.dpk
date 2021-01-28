@@ -36,6 +36,7 @@ contains
   MPF.Arrays in 'MPF.Arrays.pas',
   MPF.Converters in 'MPF.Converters.pas',
   MPF.Matrices in 'MPF.Matrices.pas',
-  MPF.Types in 'MPF.Types.pas';
+  MPF.Types in 'MPF.Types.pas',
+  MPF.Connections in 'MPF.Connections.pas';
 
 end.

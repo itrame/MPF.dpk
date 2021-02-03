@@ -3,11 +3,11 @@ interface uses MPF.Types;
 
 //==============================================================================
 type
-  TByteHelper = record helper for TByte
+  TByteHelper = record helper for Byte
     function GetBit(Index: Byte): Boolean;
+    function ToStr: string;
     procedure SetBit(Index: Byte; const AValue: Boolean);
     property Bit[Index: Byte]: Boolean read GetBit write SetBit;
-
   end;
 
 //==============================================================================
@@ -32,7 +32,7 @@ var
 
 begin
   if Index > 7 then
-    raise Exception.Create('GetBit for TByte - bit index: ' + Index.ToString + ' > 7!');
+    raise Exception.Create('GetBit for TByte - bit index: ' + Index.ToStr + ' > 7!');
 
   AMask := $01 shl Index;
   if AValue then
@@ -40,6 +40,12 @@ begin
   else
     Self := Self and (not AMask);
 
+end;
+
+//------------------------------------------------------------------------------
+function TByteHelper.ToStr: string;
+begin
+  Result := IntToStr(Self);
 end;
 
 //==============================================================================

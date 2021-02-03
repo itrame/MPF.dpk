@@ -29,7 +29,11 @@ package MPF;
 
 requires
   rtl,
-  Spring.Core;
+  Spring.Core,
+  IndySystem,
+  IndyCore,
+  vcl,
+  CiaComPortPackage;
 
 contains
   MPF.Arrays in 'MPF.Arrays.pas',
@@ -37,6 +41,7 @@ contains
   MPF.Matrices in 'MPF.Matrices.pas',
   MPF.Types in 'MPF.Types.pas',
   MPF.Connections in 'MPF.Connections.pas',
-  MPF.Ascii in 'MPF.Ascii.pas';
+  MPF.Ascii in 'MPF.Ascii.pas',
+  MPF.Helpers in 'MPF.Helpers.pas';
 
 end.

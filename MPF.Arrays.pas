@@ -223,6 +223,9 @@ type
 
     class function NewArrayToStr<T>(const APrefix, ASeparator, ASuffix: string;
       AItemConverter: IValueToStr<T>): TArrayToStr<T>; overload;
+
+    class function NewBytesFromString(const AString: string): TArrayOf<Byte>;
+
   end;
 
 //==============================================================================
@@ -366,6 +369,16 @@ end;
 class function TArrays.NewBrowser<T>(AComparer: IEqualityComparer<T>): TArrayBrowser<T>;
 begin
   Result := TArrayBrowser<T>.Create(AComparer);
+end;
+
+//------------------------------------------------------------------------------
+class function TArrays.NewBytesFromString(const AString: string): TArrayOf<Byte>;
+var
+  AData: TBytes;
+  i: Integer;
+begin
+  for i:=1 to Length(AString) do AData := AData + [Byte(AString[i])];
+  Result := NewArray<Byte>(AData);
 end;
 
 //------------------------------------------------------------------------------

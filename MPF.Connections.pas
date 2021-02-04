@@ -353,9 +353,9 @@ end;
 //------------------------------------------------------------------------------
 procedure TCOMConnection.Purge;
 begin
-  RxData := [];
   Connection.PurgeRx;
   Connection.PurgeTx;
+  RxData := [];
 end;
 
 //------------------------------------------------------------------------------

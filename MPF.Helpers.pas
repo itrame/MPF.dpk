@@ -5,8 +5,10 @@ interface uses MPF.Types;
 type
   TByteHelper = record helper for Byte
     function GetBit(Index: Byte): Boolean;
-    function ToStr: string;
     procedure SetBit(Index: Byte; const AValue: Boolean);
+    function ToStr: string;
+    function Lo: Byte;
+    function Hi: Byte;
     property Bit[Index: Byte]: Boolean read GetBit write SetBit;
   end;
 
@@ -23,6 +25,18 @@ begin
 
   Result := ((Self shr Index) and $01) = $01;
 
+end;
+
+//------------------------------------------------------------------------------
+function TByteHelper.Hi: Byte;
+begin
+  Result := Self shr 4;
+end;
+
+//------------------------------------------------------------------------------
+function TByteHelper.Lo: Byte;
+begin
+  Result := Self and $0F;
 end;
 
 //------------------------------------------------------------------------------

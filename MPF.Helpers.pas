@@ -9,6 +9,7 @@ type
     function ToStr: string;
     function Lo: Byte;
     function Hi: Byte;
+    function BCDToInt: Integer;
     property Bit[Index: Byte]: Boolean read GetBit write SetBit;
   end;
 
@@ -18,6 +19,12 @@ implementation uses SysUtils;
 //==============================================================================
 { TByteHelper }
 
+function TByteHelper.BCDToInt: Integer;
+begin
+  Result := (10 * Hi) + Lo;
+end;
+
+//------------------------------------------------------------------------------
 function TByteHelper.GetBit(Index: Byte): Boolean;
 begin
   if Index > 7 then

@@ -1,5 +1,5 @@
 unit MPF.Helpers;
-interface uses MPF.Types;
+interface uses SysUtils, MPF.Types;
 
 //==============================================================================
 type
@@ -13,8 +13,17 @@ type
     property Bit[Index: Byte]: Boolean read GetBit write SetBit;
   end;
 
+//------------------------------------------------------------------------------
+  TBytesHelper = record helper for TBytes
+    function GetWord(const APos: Integer): Word;
+    function GetInt16(const APos: Integer): Int16;
+    function GetUInt32(const APos: Integer): UInt32;
+    function GetUInt64(const APos: Integer): UInt64;
+    function GetBCD(const APos: Integer): Byte;
+  end;
+
 //==============================================================================
-implementation uses SysUtils;
+implementation
 
 //==============================================================================
 { TByteHelper }
@@ -70,5 +79,43 @@ begin
 end;
 
 //==============================================================================
+{ TBytesHelper }
+
+function TBytesHelper.GetBCD(const APos: Integer): Byte;
+begin
+  Result := (Self[APos] shr 4)*10 + (Self[APos] and $0F);
+end;
+
+//------------------------------------------------------------------------------
+function TBytesHelper.GetInt16(const APos: Integer): Int16;
+begin
+  Result := (Self[APos] shl 8) or Self[APos+1];
+end;
+
+//------------------------------------------------------------------------------
+function TBytesHelper.GetUInt32(const APos: Integer): UInt32;
+begin
+  Result := (Self[APos] shl 8) or Self[APos+1];
+  Result := (Result shl 8) or Self[APos+2];
+  Result := (Result shl 8) or Self[APos+3];
+end;
+
+//------------------------------------------------------------------------------
+function TBytesHelper.GetUInt64(const APos: Integer): UInt64;
+begin
+  Result := (Self[APos] shl 8) or Self[APos+1];
+  Result := (Result shl 8) or Self[APos+2];
+  Result := (Result shl 8) or Self[APos+3];
+  Result := (Result shl 8) or Self[APos+4];
+  Result := (Result shl 8) or Self[APos+5];
+  Result := (Result shl 8) or Self[APos+6];
+  Result := (Result shl 8) or Self[APos+7];
+end;
+
+//------------------------------------------------------------------------------
+function TBytesHelper.GetWord(const APos: Integer): Word;
+begin
+  Result := (Self[APos] shl 8) or Self[APos+1];
+end;
 
 end.

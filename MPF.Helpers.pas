@@ -22,6 +22,9 @@ type
     function GetBCD(const APos: Integer): Byte;
   end;
 
+//------------------------------------------------------------------------------
+function ToTimeStr(const AHour, AMin: Byte): string;
+
 //==============================================================================
 implementation
 
@@ -116,6 +119,17 @@ end;
 function TBytesHelper.GetWord(const APos: Integer): Word;
 begin
   Result := (Self[APos] shl 8) or Self[APos+1];
+end;
+
+//==============================================================================
+function ToTimeStr(const AHour, AMin: Byte): string;
+var
+  AHrStr,AMinStr: string;
+begin
+  AHrStr := AHour.ToStr;
+  AMinStr := AMin.ToStr;
+  if Length(AMinStr) < 2 then AMinStr := '0' + AMinStr;
+  Result := AHrStr + ':' + AMinStr;
 end;
 
 end.

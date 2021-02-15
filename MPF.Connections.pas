@@ -194,7 +194,11 @@ end;
 
 //------------------------------------------------------------------------------
 procedure TUDPConnection.Purge;
+var
+  ALocalData: TBytes;
 begin
+  SetLength(ALocalData, Connection.BufferSize);
+  Connection.ReceiveBuffer(TIdBytes(ALocalData), 0);
   RxBuffer := [];
 end;
 

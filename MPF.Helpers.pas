@@ -23,6 +23,12 @@ type
   end;
 
 //------------------------------------------------------------------------------
+  TStringHelper = record helper for string
+    function DeleteLeading(const AChar: Char): string;
+    function DeleteEnding(const AChar: Char): string;
+  end;
+
+//------------------------------------------------------------------------------
 function ToTimeStr(const AHour, AMin: Byte): string;
 
 //==============================================================================
@@ -122,6 +128,24 @@ begin
 end;
 
 //==============================================================================
+{ TStringHelper }
+
+function TStringHelper.DeleteEnding(const AChar: Char): string;
+begin
+  Result := Self;
+  while Length(Result) > 0 do
+    if Self[Length(Result)] = AChar then Delete(Result, Length(Result), 1) else Break;
+end;
+
+//------------------------------------------------------------------------------
+function TStringHelper.DeleteLeading(const AChar: Char): string;
+begin
+  Result := Self;
+  while Length(Result) > 0 do
+    if Result[1] = AChar then Delete(Result, 1, 1) else Break;
+end;
+
+//==============================================================================
 function ToTimeStr(const AHour, AMin: Byte): string;
 var
   AHrStr,AMinStr: string;
@@ -131,5 +155,6 @@ begin
   if Length(AMinStr) < 2 then AMinStr := '0' + AMinStr;
   Result := AHrStr + ':' + AMinStr;
 end;
+
 
 end.

@@ -1,9 +1,14 @@
 unit MPF.Connections;
-interface uses IdUdpClient, SysUtils, CiaComPort, Vcl.ExtCtrls;
+interface uses IdUdpClient, SysUtils
+{$IFDEF MSWINDOWS} ,CiaComPort, Vcl.ExtCtrls {$ENDIF};
 
 //==============================================================================
 type
-  IConnectionInfo = interface['{2981AC84-4613-4E71-B297-F9915AAC0432}']
+  IConnectionObject = interface['{2A53264C-60A2-4678-B4FF-909339A5BF31}']
+  end;
+
+//------------------------------------------------------------------------------
+  IConnectionInfo = interface(IConnectionObject)['{2981AC84-4613-4E71-B297-F9915AAC0432}']
     function GetReadTimeout: Integer;
     property ReadTimeout: Integer read GetReadTimeout;
   end;
@@ -59,7 +64,7 @@ type
   end;
 
 //------------------------------------------------------------------------------
-  IConnection = interface['{1B0B63CB-7407-4B8B-961D-42B9589FCDC3}']
+  IConnection = interface(IConnectionObject)['{1B0B63CB-7407-4B8B-961D-42B9589FCDC3}']
     procedure Send(const AData: TBytes);
     function Receive(const ACount: Integer): TBytes;
     procedure Purge;
@@ -74,7 +79,8 @@ type
   end;
 
 //==============================================================================
-  TUDPConnection = class(TInterfacedObject, IConnection, IConfigurableIPConnection)
+  TUDPConnection = class(TInterfacedObject, IConnection, IConfigurableIPConnection,
+    IConnectionObject)
   strict private
     Connection: TIdUdpClient;
     RxBuffer: TBytes;
@@ -99,8 +105,9 @@ type
   end;
 
 //------------------------------------------------------------------------------
+{$IFDEF MSWINDOWS}
   TCOMConnection = class(TInterfacedObject, ICOMConnection, IConfigurableCOMConnection,
-    ICOMConnectionInfo)
+    ICOMConnectionInfo, IConnectionObject)
 
   strict private
     Connection: TCiaComPort;
@@ -134,19 +141,24 @@ type
 
   end;
 
+{$ENDIF}
+
 //==============================================================================
   TConnections = class
     class function NewUDP: TUDPConnection; overload;
     class function NewUDP(const AAddr: string; const APort: Word;
       const AReadTimeout: Integer = 2000): TUDPConnection; overload;
 
+{$IFDEF MSWINDOWS}
     class function NewCOM(const APort: Byte; const ABaudrate: Integer;
       const AReadTimeout: Integer = 2000): TCOMConnection; overload;
+{$ENDIF}
+
   end;
 
 
 //==============================================================================
-implementation uses IdGlobal, Vcl.Forms;
+implementation uses IdGlobal {$IFDEF MSWINDOWS}, Vcl.Forms {$ENDIF};
 
 //==============================================================================
 { TUDPConnection }
@@ -259,11 +271,15 @@ begin
 end;
 
 //------------------------------------------------------------------------------
+{$IFDEF MSWINDOWS}
+
 class function TConnections.NewCOM(const APort: Byte; const ABaudrate,
   AReadTimeout: Integer): TCOMConnection;
 begin
   Result := TCOMConnection.Create(APort, ABaudrate, AReadTimeout);
 end;
+
+{$ENDIF}
 
 //------------------------------------------------------------------------------
 class function TConnections.NewUDP(const AAddr: string; const APort: Word;
@@ -274,7 +290,7 @@ end;
 
 //==============================================================================
 { TCOMConnection }
-
+{$IFDEF MSWINDOWS}
 procedure TCOMConnection.Close;
 begin
   Purge;
@@ -428,5 +444,7 @@ procedure TCOMConnection.Wait(ATimer: TTimer);
 begin
   while ATimer.Enabled do Application.ProcessMessages;
 end;
+
+{$ENDIF}
 
 end.

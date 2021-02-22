@@ -1,4 +1,4 @@
-package MPF;
+package MPF_Win32;
 
 {$R *.res}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
@@ -29,11 +29,11 @@ package MPF;
 
 requires
   rtl,
-  Spring.Core,
   IndySystem,
   IndyCore,
   vcl,
-  CiaComPortPackage;
+  CiaComPortPackage,
+  Spring.Core;
 
 contains
   MPF.Arrays in 'MPF.Arrays.pas',

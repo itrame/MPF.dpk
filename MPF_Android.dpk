@@ -1,0 +1,45 @@
+package MPF_Android;
+
+{$R *.res}
+{$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION OFF}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES ON}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$DEFINE DEBUG}
+{$ENDIF IMPLICITBUILDING}
+{$IMPLICITBUILD ON}
+
+requires
+  rtl,
+  IndySystem,
+  IndyCore,
+  Spring.Core;
+
+contains
+  MPF.Ascii in 'MPF.Ascii.pas',
+  MPF.Types in 'MPF.Types.pas',
+  MPF.Converters in 'MPF.Converters.pas',
+  MPF.Arrays in 'MPF.Arrays.pas',
+  MPF.Matrices in 'MPF.Matrices.pas',
+  MPF.Connections in 'MPF.Connections.pas',
+  MPF.Helpers in 'MPF.Helpers.pas';
+
+end.
+

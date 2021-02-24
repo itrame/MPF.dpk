@@ -29,6 +29,11 @@ type
   end;
 
 //------------------------------------------------------------------------------
+  TUInt32Helper = record helper for UInt32
+    function ToBytes: TBytes;
+  end;
+
+//------------------------------------------------------------------------------
 function ToTimeStr(const AHour, AMin: Byte): string;
 
 //==============================================================================
@@ -146,6 +151,18 @@ begin
 end;
 
 //==============================================================================
+{ TUInt32Helper }
+
+function TUInt32Helper.ToBytes: TBytes;
+begin
+  Result := [(Self and $FF000000) shr 24];
+  Result := Result + [(Self and $00FF0000) shr 16];
+  Result := Result + [(Self and $0000FF00) shr 8];
+  Result := [Self and $000000FF];
+
+end;
+
+//==============================================================================
 function ToTimeStr(const AHour, AMin: Byte): string;
 var
   AHrStr,AMinStr: string;
@@ -155,6 +172,7 @@ begin
   if Length(AMinStr) < 2 then AMinStr := '0' + AMinStr;
   Result := AHrStr + ':' + AMinStr;
 end;
+
 
 
 end.

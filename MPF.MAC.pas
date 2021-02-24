@@ -10,7 +10,7 @@ type
   end;
 
 //==============================================================================
-function NewMACAddress(const AData: TBytes): IMACAddress;
+function NewMACAddr(const AData: TBytes): IMACAddress;
 
 //==============================================================================
 implementation
@@ -54,7 +54,7 @@ begin
 end;
 
 //==============================================================================
-function NewMACAddress(const AData: TBytes): IMACAddress;
+function NewMACAddr(const AData: TBytes): IMACAddress;
 begin
   if Length(AData) <> 6 then
     raise Exception.Create('Wrong data size. MAC Address should have 6 bytes.');

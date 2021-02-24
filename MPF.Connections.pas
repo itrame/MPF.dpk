@@ -1,6 +1,6 @@
 unit MPF.Connections;
 interface uses IdUdpClient, SysUtils
-{$IFDEF MSWINDOWS} ,CiaComPort, Vcl.ExtCtrls {$ENDIF};
+{$IFDEF MSWINDOWS} ,CiaComPort, Vcl.ExtCtrls {$ENDIF}, MPF.MAC;
 
 //==============================================================================
 type
@@ -76,6 +76,12 @@ type
     procedure Close;
     function IsOpened: Boolean;
     property Opened: Boolean read IsOpened;
+  end;
+
+//------------------------------------------------------------------------------
+  IMagicPacket = interface['{F3F96522-782A-48FE-93DF-EFCA91A8824E}']
+    function GetData: TBytes;
+    property Data: TBytes read GetData;
   end;
 
 //==============================================================================
@@ -156,9 +162,23 @@ type
 
   end;
 
+//==============================================================================
+function NewMagicPacket(AMAC: IMACAddress): IMagicPacket;
+
 
 //==============================================================================
 implementation uses IdGlobal {$IFDEF MSWINDOWS}, Vcl.Forms {$ENDIF};
+
+//==============================================================================
+type
+  TMagicPacket = class(TInterfacedObject, IMagicPacket)
+  strict private
+    Data: TBytes;
+    function CreateData(AMAC: IMACAddress): TBytes;
+    function GetData: TBytes;
+  public
+    constructor Create(AMAC: IMACAddress);
+  end;
 
 //==============================================================================
 { TUDPConnection }
@@ -446,5 +466,39 @@ begin
 end;
 
 {$ENDIF}
+
+//==============================================================================
+{ TMagicPacket }
+
+constructor TMagicPacket.Create(AMAC: IMACAddress);
+begin
+  inherited Create;
+  Data := CreateData(AMAC);
+end;
+
+//------------------------------------------------------------------------------
+function TMagicPacket.CreateData(AMAC: IMACAddress): TBytes;
+var
+  i: Integer;
+
+begin
+  Result := [];
+
+  for i:=0 to 5 do Result := Result + [$FF];
+  for i:=0 to 15 do Result := Result + AMAC.Data;
+
+end;
+
+//------------------------------------------------------------------------------
+function TMagicPacket.GetData: TBytes;
+begin
+  Result := Data;
+end;
+
+//==============================================================================
+function NewMagicPacket(AMAC: IMACAddress): IMagicPacket;
+begin
+  Result := TMagicPacket.Create(AMAC);
+end;
 
 end.

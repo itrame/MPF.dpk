@@ -6,7 +6,9 @@ type
   IMACAddress = interface['{B34C6408-3E3A-4611-A17C-EE2FF5C4A47F}']
     function AsString(const ASeparator: string = ''): string;
     function GetByte(Index: Integer): Byte;
+    function GetData: TBytes;
     property Bytes[Index: Integer]: Byte read GetByte;
+    property Data: TBytes read GetData;
   end;
 
 //==============================================================================
@@ -22,6 +24,7 @@ type
     Bytes: TBytes;
     function AsString(const ASeparator: string = ''): string;
     function GetByte(Index: Integer): Byte;
+    function GetData: TBytes;
   public
     constructor Create(const AData: TBytes);
   end;
@@ -51,6 +54,12 @@ end;
 function TMACAddress.GetByte(Index: Integer): Byte;
 begin
   Result := Bytes[Index];
+end;
+
+//------------------------------------------------------------------------------
+function TMACAddress.GetData: TBytes;
+begin
+  Result := Bytes;
 end;
 
 //==============================================================================

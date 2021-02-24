@@ -42,6 +42,7 @@ contains
   MPF.Types in 'MPF.Types.pas',
   MPF.Connections in 'MPF.Connections.pas',
   MPF.Ascii in 'MPF.Ascii.pas',
-  MPF.Helpers in 'MPF.Helpers.pas';
+  MPF.Helpers in 'MPF.Helpers.pas',
+  MPF.MAC in 'MPF.MAC.pas';
 
 end.

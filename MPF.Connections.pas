@@ -86,7 +86,7 @@ type
 
 //==============================================================================
   TUDPConnection = class(TInterfacedObject, IConnection, IConfigurableIPConnection,
-    IConnectionObject)
+    IConnectionObject, IIPConnectionInfo)
   strict private
     Connection: TIdUdpClient;
     RxBuffer: TBytes;

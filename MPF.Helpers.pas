@@ -158,7 +158,7 @@ begin
   Result := [(Self and $FF000000) shr 24];
   Result := Result + [(Self and $00FF0000) shr 16];
   Result := Result + [(Self and $0000FF00) shr 8];
-  Result := [Self and $000000FF];
+  Result := Result + [Self and $000000FF];
 
 end;
 

@@ -11,27 +11,42 @@ type
     property Data: TBytes read GetData;
   end;
 
-//==============================================================================
-function NewMACAddr(const AData: TBytes): IMACAddress;
+//------------------------------------------------------------------------------
+  IEditableMACAddress = interface['{E9B31D48-DF14-43C1-8417-F0B1EBB98651}']
+    function GetData: TBytes;
+    procedure SetData(const AData: TBytes);
+    function AsMACAddress: IMACAddress;
+    property Data: TBytes read GetData write SetData;
+  end;
 
 //==============================================================================
-implementation
+implementation uses Spring.Container;
 
 //==============================================================================
 type
-  TMACAddress = class(TInterfacedObject, IMACAddress)
+  TMACAddress = class(TInterfacedObject, IMACAddress, IEditableMACAddress)
   strict private
     Bytes: TBytes;
     function AsString(const ASeparator: string = ''): string;
     function GetByte(Index: Integer): Byte;
     function GetData: TBytes;
+    procedure SetData(const AData: TBytes);
+    function AsMACAddress: IMACAddress;
+    function ValidateData(const AData: TBytes): Boolean;
   public
-    constructor Create(const AData: TBytes);
+    constructor Create(const AData: TBytes); overload;
+    constructor Create; overload;
   end;
 
 //==============================================================================
 { TMACAddress }
 
+function TMACAddress.AsMACAddress: IMACAddress;
+begin
+  Result := Self;
+end;
+
+//------------------------------------------------------------------------------
 function TMACAddress.AsString(const ASeparator: string = ''): string;
 var
   i: Integer;
@@ -47,7 +62,14 @@ end;
 constructor TMACAddress.Create(const AData: TBytes);
 begin
   inherited Create;
-  Bytes := AData;
+  SetData(AData);
+end;
+
+//------------------------------------------------------------------------------
+constructor TMACAddress.Create;
+begin
+  inherited;
+  SetData([0, 0, 0, 0, 0, 0]);
 end;
 
 //------------------------------------------------------------------------------
@@ -62,14 +84,28 @@ begin
   Result := Bytes;
 end;
 
-//==============================================================================
-function NewMACAddr(const AData: TBytes): IMACAddress;
+//------------------------------------------------------------------------------
+procedure TMACAddress.SetData(const AData: TBytes);
+var
+  i: Integer;
 begin
-  if Length(AData) <> 6 then
-    raise Exception.Create('Wrong data size. MAC Address should have 6 bytes.');
-
-  Result := TMACAddress.Create(AData);
-
+  if not ValidateData(AData) then raise Exception.Create('Data is not valid MAC Address.');
+  Bytes := [];
+  for i:=0 to Length(AData)-1 do Bytes := Bytes + [AData[i]];
 end;
+
+//------------------------------------------------------------------------------
+function TMACAddress.ValidateData(const AData: TBytes): Boolean;
+begin
+  Result := false;
+  if Length(AData) <> 6 then Exit;
+  Result := true;
+end;
+
+//==============================================================================
+initialization
+  GlobalContainer.RegisterType<TMACAddress>.
+    Implements<IMACAddress>.
+    Implements<IEditableMACAddress>;
 
 end.

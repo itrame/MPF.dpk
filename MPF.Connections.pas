@@ -202,7 +202,9 @@ end;
 //------------------------------------------------------------------------------
 destructor TUDPConnection.Destroy;
 begin
-  Connection.Free;
+  {$IFDEF ANDROID} try {$ENDIF ANDROID}
+    Connection.Free;
+  {$IFDEF ANDROID} except end; {$ENDIF ANDROID}
   inherited;
 end;
 

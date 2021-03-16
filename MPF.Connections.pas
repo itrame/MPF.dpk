@@ -1,6 +1,6 @@
 unit MPF.Connections;
 interface uses IdUdpClient, SysUtils
-{$IFDEF MSWINDOWS} ,CiaComPort, Vcl.ExtCtrls {$ENDIF}, MPF.MAC;
+{$IFDEF MSWINDOWS} ,CiaComPort, Vcl.ExtCtrls {$ENDIF}, MPF.MAC, Classes;
 
 //==============================================================================
 type
@@ -102,8 +102,8 @@ type
     procedure Purge;
 
   public
-    constructor Create; overload;
-    constructor Create(const AAddr: string; const APort: Word;
+    constructor Create(AOwner: TComponent); overload;
+    constructor Create(AOwner: TComponent; const AAddr: string; const APort: Word;
       const AReadTimeout: Integer = 2000); overload;
 
     destructor Destroy; override;
@@ -151,9 +151,9 @@ type
 
 //==============================================================================
   TConnections = class
-    class function NewUDP: TUDPConnection; overload;
-    class function NewUDP(const AAddr: string; const APort: Word;
-      const AReadTimeout: Integer = 2000): TUDPConnection; overload;
+    class function NewUDP(AOwner: TComponent): IConnection; overload;
+    class function NewUDP(AOwner: TComponent; const AAddr: string; const APort: Word;
+      const AReadTimeout: Integer = 2000): IConnection; overload;
 
 {$IFDEF MSWINDOWS}
     class function NewCOM(const APort: Byte; const ABaudrate: Integer;
@@ -183,17 +183,17 @@ type
 //==============================================================================
 { TUDPConnection }
 
-constructor TUDPConnection.Create;
+constructor TUDPConnection.Create(AOwner: TComponent);
 begin
-  inherited;
-  Connection := TIdUdpClient.Create;
+  inherited Create;
+  Connection := TIdUdpClient.Create(AOwner);
 end;
 
 //------------------------------------------------------------------------------
-constructor TUDPConnection.Create(const AAddr: string; const APort: Word;
-  const AReadTimeout: Integer);
+constructor TUDPConnection.Create(AOwner: TComponent; const AAddr: string; const APort: Word;
+  const AReadTimeout: Integer = 2000);
 begin
-  Create;
+  Create(AOwner);
   Connection.Host := AAddr;
   Connection.Port := APort;
   Connection.ReceiveTimeout := AReadTimeout;
@@ -202,9 +202,7 @@ end;
 //------------------------------------------------------------------------------
 destructor TUDPConnection.Destroy;
 begin
-  {$IFDEF ANDROID} try {$ENDIF ANDROID}
-    Connection.Free;
-  {$IFDEF ANDROID} except end; {$ENDIF ANDROID}
+  Connection.Free;
   inherited;
 end;
 
@@ -287,9 +285,9 @@ end;
 //==============================================================================
 { TMPFConnections }
 
-class function TConnections.NewUDP: TUDPConnection;
+class function TConnections.NewUDP(AOwner: TComponent): IConnection;
 begin
-  Result := TUDPConnection.Create;
+  Result := TUDPConnection.Create(AOwner);
 end;
 
 //------------------------------------------------------------------------------
@@ -304,10 +302,10 @@ end;
 {$ENDIF}
 
 //------------------------------------------------------------------------------
-class function TConnections.NewUDP(const AAddr: string; const APort: Word;
-  const AReadTimeout: Integer): TUDPConnection;
+class function TConnections.NewUDP(AOwner: TComponent; const AAddr: string;
+  const APort: Word; const AReadTimeout: Integer): IConnection;
 begin
-  Result := TUDPConnection.Create(AAddr, APort, AReadTimeout);
+  Result := TUDPConnection.Create(AOwner, AAddr, APort, AReadTimeout);
 end;
 
 //==============================================================================

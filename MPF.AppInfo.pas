@@ -9,12 +9,15 @@ type
     function GetDirectory: string;
     function GetFileVersion: IVersion;
     function GetAppName: string;
+    function GetAppNameVer: string;
+    procedure SetSeparator(const ASep: string);
 
     property FileVersion: IVersion read GetFileVersion;
     property Version: IAppVersion read GetVersion;
     property FileName: string read GetFileName;
     property Directory: string read GetDirectory;
     property AppName: string read GetAppName;
+    property AppNameVer: string read GetAppNameVer;
 
   end;
 
@@ -30,14 +33,20 @@ type
   strict private
     Compile: TCompile;
     AppName: string;
+    Separator: string;
     function GetVersion: IAppVersion;
     function GetFileName: string;
     function GetDirectory: string;
     function GetFileVersion: IVersion;
     function GetAppName: string;
+    function GetAppNameVer: string;
+    procedure SetSeparator(const ASep: string);
+
   public
+    constructor Create; overload;
     constructor Create(const AAppName: string); overload;
     constructor Create(const AAppName: string; const ACompile: TCompile); overload;
+
   end;
 
 //==============================================================================
@@ -45,7 +54,7 @@ type
 
 constructor TAppInfo.Create(const AAppName: string);
 begin
-  inherited Create;
+  Create;
   AppName := AAppName;
   Compile := Release;
 end;
@@ -53,15 +62,28 @@ end;
 //------------------------------------------------------------------------------
 constructor TAppInfo.Create(const AAppName: string; const ACompile: TCompile);
 begin
-  inherited Create;
+  Create;
   AppName := AAppName;
   Compile := ACompile;
+end;
+
+//------------------------------------------------------------------------------
+constructor TAppInfo.Create;
+begin
+  inherited;
+  Separator := ' - ';
 end;
 
 //------------------------------------------------------------------------------
 function TAppInfo.GetAppName: string;
 begin
   Result := AppName;
+end;
+
+//------------------------------------------------------------------------------
+function TAppInfo.GetAppNameVer: string;
+begin
+  Result := GetAppName + Separator + GetVersion.AsString;
 end;
 
 //------------------------------------------------------------------------------
@@ -89,6 +111,12 @@ end;
 function TAppInfo.GetVersion: IAppVersion;
 begin
   Result := NewAppVersion( GetFileVersion, Compile );
+end;
+
+//------------------------------------------------------------------------------
+procedure TAppInfo.SetSeparator(const ASep: string);
+begin
+  Separator := ASep;
 end;
 
 //==============================================================================

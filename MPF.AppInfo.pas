@@ -8,16 +8,18 @@ type
     function GetFileName: string;
     function GetDirectory: string;
     function GetFileVersion: IVersion;
+    function GetAppName: string;
 
     property FileVersion: IVersion read GetFileVersion;
     property Version: IAppVersion read GetVersion;
     property FileName: string read GetFileName;
     property Directory: string read GetDirectory;
+    property AppName: string read GetAppName;
 
   end;
 
 //==============================================================================
-function NewAppInfo(ACompile: TCompile = Release): IAppInfo;
+function NewAppInfo(const AAppName: string; const ACompile: TCompile = Release): IAppInfo;
 
 //==============================================================================
 implementation uses SysUtils;
@@ -27,29 +29,39 @@ type
   TAppInfo = class(TInterfacedObject, IAppInfo)
   strict private
     Compile: TCompile;
+    AppName: string;
     function GetVersion: IAppVersion;
     function GetFileName: string;
     function GetDirectory: string;
     function GetFileVersion: IVersion;
+    function GetAppName: string;
   public
-    constructor Create; overload;
-    constructor Create(ACompile: TCompile); overload;
+    constructor Create(const AAppName: string); overload;
+    constructor Create(const AAppName: string; const ACompile: TCompile); overload;
   end;
 
 //==============================================================================
 { TAppInfo }
 
-constructor TAppInfo.Create;
+constructor TAppInfo.Create(const AAppName: string);
 begin
-  inherited;
+  inherited Create;
+  AppName := AAppName;
   Compile := Release;
 end;
 
 //------------------------------------------------------------------------------
-constructor TAppInfo.Create(ACompile: TCompile);
+constructor TAppInfo.Create(const AAppName: string; const ACompile: TCompile);
 begin
   inherited Create;
+  AppName := AAppName;
   Compile := ACompile;
+end;
+
+//------------------------------------------------------------------------------
+function TAppInfo.GetAppName: string;
+begin
+  Result := AppName;
 end;
 
 //------------------------------------------------------------------------------
@@ -80,9 +92,9 @@ begin
 end;
 
 //==============================================================================
-function NewAppInfo(ACompile: TCompile = Release): IAppInfo;
+function NewAppInfo(const AAppName: string; const ACompile: TCompile = Release): IAppInfo;
 begin
-  Result := TAppInfo.Create(ACompile);
+  Result := TAppInfo.Create(AAppName, ACompile);
 end;
 
 end.

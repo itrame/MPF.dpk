@@ -43,6 +43,8 @@ contains
   MPF.Connections in 'MPF.Connections.pas',
   MPF.Ascii in 'MPF.Ascii.pas',
   MPF.Helpers in 'MPF.Helpers.pas',
-  MPF.MAC in 'MPF.MAC.pas';
+  MPF.MAC in 'MPF.MAC.pas',
+  MPF.Version in 'MPF.Version.pas',
+  MPF.AppInfo in 'MPF.AppInfo.pas';
 
 end.

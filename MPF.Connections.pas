@@ -4,11 +4,7 @@ interface uses IdUdpClient, SysUtils
 
 //==============================================================================
 type
-  IConnectionObject = interface['{2A53264C-60A2-4678-B4FF-909339A5BF31}']
-  end;
-
-//------------------------------------------------------------------------------
-  IConnectionInfo = interface(IConnectionObject)['{2981AC84-4613-4E71-B297-F9915AAC0432}']
+  IConnectionInfo = interface['{2981AC84-4613-4E71-B297-F9915AAC0432}']
     function GetReadTimeout: Integer;
     property ReadTimeout: Integer read GetReadTimeout;
   end;
@@ -64,10 +60,11 @@ type
   end;
 
 //------------------------------------------------------------------------------
-  IConnection = interface(IConnectionObject)['{1B0B63CB-7407-4B8B-961D-42B9589FCDC3}']
+  IConnection = interface['{1B0B63CB-7407-4B8B-961D-42B9589FCDC3}']
     procedure Send(const AData: TBytes);
     function Receive(const ACount: Integer): TBytes;
     procedure Purge;
+    function Clone: IConnection;
   end;
 
 //------------------------------------------------------------------------------
@@ -86,7 +83,7 @@ type
 
 //==============================================================================
   TUDPConnection = class(TInterfacedObject, IConnection, IConfigurableIPConnection,
-    IConnectionObject, IIPConnectionInfo)
+    IIPConnectionInfo)
   strict private
     Connection: TIdUdpClient;
     RxBuffer: TBytes;
@@ -100,6 +97,7 @@ type
     procedure Send(const AData: TBytes);
     function Receive(const ACount: Integer): TBytes;
     procedure Purge;
+    function Clone: IConnection;
 
   public
     constructor Create(AOwner: TComponent); overload;
@@ -113,7 +111,7 @@ type
 //------------------------------------------------------------------------------
 {$IFDEF MSWINDOWS}
   TCOMConnection = class(TInterfacedObject, ICOMConnection, IConfigurableCOMConnection,
-    ICOMConnectionInfo, IConnectionObject)
+    ICOMConnectionInfo, IConnection)
 
   strict private
     Connection: TCiaComPort;
@@ -138,6 +136,7 @@ type
     function IsOpened: Boolean;
     function ReadFromBuffer(const ACount: Integer): TBytes;
     procedure Wait(ATimer: TTimer);
+    function Clone: IConnection;
 
   public
     constructor Create; overload;
@@ -187,6 +186,12 @@ constructor TUDPConnection.Create(AOwner: TComponent);
 begin
   inherited Create;
   Connection := TIdUdpClient.Create(AOwner);
+end;
+
+//------------------------------------------------------------------------------
+function TUDPConnection.Clone: IConnection;
+begin
+  Result := TUDPConnection.Create(Connection.Owner, GetAddress, GetPort, GetReadTimeout);
 end;
 
 //------------------------------------------------------------------------------
@@ -311,6 +316,13 @@ end;
 //==============================================================================
 { TCOMConnection }
 {$IFDEF MSWINDOWS}
+
+function TCOMConnection.Clone: IConnection;
+begin
+  Result := TCOMConnection.Create(GetPort, GetBaudrate, GetReadTimeout);
+end;
+
+//------------------------------------------------------------------------------
 procedure TCOMConnection.Close;
 begin
   Purge;

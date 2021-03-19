@@ -4,29 +4,20 @@ interface uses IdUdpClient, SysUtils
 
 //==============================================================================
 type
-  IConnectionInfo = interface['{2981AC84-4613-4E71-B297-F9915AAC0432}']
+  IConnection = interface['{1B0B63CB-7407-4B8B-961D-42B9589FCDC3}']
+    procedure Send(const AData: TBytes);
+    function Receive(const ACount: Integer): TBytes;
+    procedure Purge;
+    function Clone: IConnection;
     function GetReadTimeout: Integer;
-    property ReadTimeout: Integer read GetReadTimeout;
-  end;
-
-//------------------------------------------------------------------------------
-  IConfigurableConnection = interface(IConnectionInfo)['{23A62567-07B4-4778-A322-85F1C82BD818}']
     procedure SetReadTimeout(const ATimeout: Integer);
+
     property ReadTimeout: Integer read GetReadTimeout write SetReadTimeout;
-  end;
-
-//------------------------------------------------------------------------------
-  IIPConnectionInfo = interface(IConnectionInfo)['{FAC85938-2524-4FDC-B318-EFF7A101EE88}']
-    function GetAddress: string;
-    function GetPort: Word;
-
-    property Address: string read GetAddress;
-    property Port: Word read GetPort;
 
   end;
 
 //------------------------------------------------------------------------------
-  IConfigurableIPConnection = interface(IConfigurableConnection)['{0D603E35-6FD2-490A-B276-38C3228B0147}']
+  INetworkConnection = interface(IConnection)['{0D603E35-6FD2-490A-B276-38C3228B0147}']
     function GetAddress: string;
     procedure SetAddress(const AAddress: string);
     function GetPort: Word;
@@ -38,33 +29,7 @@ type
   end;
 
 //------------------------------------------------------------------------------
-  ICOMConnectionInfo = interface(IConnectionInfo)['{DDED98A6-D950-4260-947E-B12CC6119971}']
-    function GetPort: Byte;
-    function GetBaudrate: Integer;
-
-    property Port: Byte read GetPort;
-    property Baudrate: Integer read GetBaudrate;
-
-  end;
-
-//------------------------------------------------------------------------------
-  IConfigurableCOMConnection = interface(IConfigurableConnection)['{BE1F71CF-FFA2-4427-9F96-F6B0E6E9DE8A}']
-    function GetPort: Byte;
-    procedure SetPort(const APort: Byte);
-    function GetBaudrate: Integer;
-    procedure SetBaudrate(const ABaudrate: Integer);
-
-    property Port: Byte read GetPort write SetPort;
-    property Baudrate: Integer read GetBaudrate write SetBaudrate;
-
-  end;
-
-//------------------------------------------------------------------------------
-  IConnection = interface['{1B0B63CB-7407-4B8B-961D-42B9589FCDC3}']
-    procedure Send(const AData: TBytes);
-    function Receive(const ACount: Integer): TBytes;
-    procedure Purge;
-    function Clone: IConnection;
+  IUDPConnection = interface(IConnection)['{824BA484-456F-407B-A8F9-70A4F2DE25F6}']
   end;
 
 //------------------------------------------------------------------------------
@@ -72,7 +37,15 @@ type
     procedure Open;
     procedure Close;
     function IsOpened: Boolean;
+    function GetPort: Byte;
+    procedure SetPort(const APort: Byte);
+    function GetBaudrate: Integer;
+    procedure SetBaudrate(const ABaudrate: Integer);
+
     property Opened: Boolean read IsOpened;
+    property Port: Byte read GetPort write SetPort;
+    property Baudrate: Integer read GetBaudrate write SetBaudrate;
+
   end;
 
 //------------------------------------------------------------------------------
@@ -82,8 +55,8 @@ type
   end;
 
 //==============================================================================
-  TUDPConnection = class(TInterfacedObject, IConnection, IConfigurableIPConnection,
-    IIPConnectionInfo)
+  TUDPConnection = class(TInterfacedObject, IConnection, INetworkConnection,
+    IUDPConnection)
   strict private
     Connection: TIdUdpClient;
     RxBuffer: TBytes;
@@ -100,8 +73,11 @@ type
     function Clone: IConnection;
 
   public
+    constructor Create; overload;
     constructor Create(AOwner: TComponent); overload;
     constructor Create(AOwner: TComponent; const AAddr: string; const APort: Word;
+      const AReadTimeout: Integer = 2000); overload;
+    constructor Create(const AAddr: string; const APort: Word;
       const AReadTimeout: Integer = 2000); overload;
 
     destructor Destroy; override;
@@ -110,9 +86,7 @@ type
 
 //------------------------------------------------------------------------------
 {$IFDEF MSWINDOWS}
-  TCOMConnection = class(TInterfacedObject, ICOMConnection, IConfigurableCOMConnection,
-    ICOMConnectionInfo, IConnection)
-
+  TCOMConnection = class(TInterfacedObject, ICOMConnection, IConnection)
   strict private
     Connection: TCiaComPort;
     BytesToReceive: Integer;
@@ -150,7 +124,10 @@ type
 
 //==============================================================================
   TConnections = class
+    class function NewUDP: IConnection; overload;
     class function NewUDP(AOwner: TComponent): IConnection; overload;
+    class function NewUDP(const AAddr: string; const APort: Word;
+      const AReadTimeout: Integer = 2000): IConnection; overload;
     class function NewUDP(AOwner: TComponent; const AAddr: string; const APort: Word;
       const AReadTimeout: Integer = 2000): IConnection; overload;
 
@@ -202,6 +179,23 @@ begin
   Connection.Host := AAddr;
   Connection.Port := APort;
   Connection.ReceiveTimeout := AReadTimeout;
+end;
+
+//------------------------------------------------------------------------------
+constructor TUDPConnection.Create(const AAddr: string; const APort: Word;
+  const AReadTimeout: Integer);
+begin
+  Create;
+  Connection.Host := AAddr;
+  Connection.Port := APort;
+  Connection.ReceiveTimeout := AReadTimeout;
+end;
+
+//------------------------------------------------------------------------------
+constructor TUDPConnection.Create;
+begin
+  inherited;
+  Connection := TIdUdpClient.Create;
 end;
 
 //------------------------------------------------------------------------------
@@ -288,11 +282,31 @@ begin
 end;
 
 //==============================================================================
-{ TMPFConnections }
+{ TConnections }
 
+class function TConnections.NewUDP: IConnection;
+begin
+  Result := TUDPConnection.Create;
+end;
+
+//------------------------------------------------------------------------------
 class function TConnections.NewUDP(AOwner: TComponent): IConnection;
 begin
   Result := TUDPConnection.Create(AOwner);
+end;
+
+//------------------------------------------------------------------------------
+class function TConnections.NewUDP(const AAddr: string; const APort: Word;
+  const AReadTimeout: Integer = 2000): IConnection;
+begin
+  Result := TUDPConnection.Create(AAddr, APort, AReadTimeout);
+end;
+
+//------------------------------------------------------------------------------
+class function TConnections.NewUDP(AOwner: TComponent; const AAddr: string;
+  const APort: Word; const AReadTimeout: Integer): IConnection;
+begin
+  Result := TUDPConnection.Create(AOwner, AAddr, APort, AReadTimeout);
 end;
 
 //------------------------------------------------------------------------------
@@ -305,13 +319,6 @@ begin
 end;
 
 {$ENDIF}
-
-//------------------------------------------------------------------------------
-class function TConnections.NewUDP(AOwner: TComponent; const AAddr: string;
-  const APort: Word; const AReadTimeout: Integer): IConnection;
-begin
-  Result := TUDPConnection.Create(AOwner, AAddr, APort, AReadTimeout);
-end;
 
 //==============================================================================
 { TCOMConnection }
@@ -478,7 +485,6 @@ begin
 end;
 
 {$ENDIF}
-
 //==============================================================================
 { TMagicPacket }
 
@@ -507,7 +513,7 @@ begin
   Result := Data;
 end;
 
-//==============================================================================
+//------------------------------------------------------------------------------
 function NewMagicPacket(AMAC: IMACAddress): IMagicPacket;
 begin
   Result := TMagicPacket.Create(AMAC);

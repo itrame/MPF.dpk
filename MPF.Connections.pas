@@ -29,7 +29,11 @@ type
   end;
 
 //------------------------------------------------------------------------------
-  IUDPConnection = interface(IConnection)['{824BA484-456F-407B-A8F9-70A4F2DE25F6}']
+  IUDPConnection = interface(INetworkConnection)['{824BA484-456F-407B-A8F9-70A4F2DE25F6}']
+  end;
+
+//------------------------------------------------------------------------------
+  ITCPConnection = interface(INetworkConnection)['{F2A27B45-BF65-4664-9273-5FD1F8EC7F6A}']
   end;
 
 //------------------------------------------------------------------------------
@@ -124,16 +128,17 @@ type
 
 //==============================================================================
   TConnections = class
-    class function NewUDP: IConnection; overload;
-    class function NewUDP(AOwner: TComponent): IConnection; overload;
+    class function NewUDP: IUDPConnection; overload;
+    class function NewUDP(AOwner: TComponent): IUDPConnection; overload;
     class function NewUDP(const AAddr: string; const APort: Word;
-      const AReadTimeout: Integer = 2000): IConnection; overload;
+      const AReadTimeout: Integer = 2000): IUDPConnection; overload;
     class function NewUDP(AOwner: TComponent; const AAddr: string; const APort: Word;
-      const AReadTimeout: Integer = 2000): IConnection; overload;
+      const AReadTimeout: Integer = 2000): IUDPConnection; overload;
 
 {$IFDEF MSWINDOWS}
+    class function NewCOM: ICOMConnection; overload;
     class function NewCOM(const APort: Byte; const ABaudrate: Integer;
-      const AReadTimeout: Integer = 2000): TCOMConnection; overload;
+      const AReadTimeout: Integer = 2000): ICOMConnection; overload;
 {$ENDIF}
 
   end;
@@ -284,27 +289,27 @@ end;
 //==============================================================================
 { TConnections }
 
-class function TConnections.NewUDP: IConnection;
+class function TConnections.NewUDP: IUDPConnection;
 begin
   Result := TUDPConnection.Create;
 end;
 
 //------------------------------------------------------------------------------
-class function TConnections.NewUDP(AOwner: TComponent): IConnection;
+class function TConnections.NewUDP(AOwner: TComponent): IUDPConnection;
 begin
   Result := TUDPConnection.Create(AOwner);
 end;
 
 //------------------------------------------------------------------------------
 class function TConnections.NewUDP(const AAddr: string; const APort: Word;
-  const AReadTimeout: Integer = 2000): IConnection;
+  const AReadTimeout: Integer = 2000): IUDPConnection;
 begin
   Result := TUDPConnection.Create(AAddr, APort, AReadTimeout);
 end;
 
 //------------------------------------------------------------------------------
 class function TConnections.NewUDP(AOwner: TComponent; const AAddr: string;
-  const APort: Word; const AReadTimeout: Integer): IConnection;
+  const APort: Word; const AReadTimeout: Integer): IUDPConnection;
 begin
   Result := TUDPConnection.Create(AOwner, AAddr, APort, AReadTimeout);
 end;
@@ -312,8 +317,14 @@ end;
 //------------------------------------------------------------------------------
 {$IFDEF MSWINDOWS}
 
+class function TConnections.NewCOM: ICOMConnection;
+begin
+  Result := TCOMConnection.Create;
+end;
+
+
 class function TConnections.NewCOM(const APort: Byte; const ABaudrate,
-  AReadTimeout: Integer): TCOMConnection;
+  AReadTimeout: Integer): ICOMConnection;
 begin
   Result := TCOMConnection.Create(APort, ABaudrate, AReadTimeout);
 end;

@@ -1,6 +1,7 @@
 unit MPF.Connections;
 interface uses IdUdpClient, SysUtils
-{$IFDEF MSWINDOWS} ,CiaComPort, Vcl.ExtCtrls {$ENDIF}, MPF.MAC, Classes;
+{$IFDEF MSWINDOWS} ,CiaComPort, Vcl.ExtCtrls {$ENDIF}, MPF.MAC, Classes,
+  IdTCPClient;
 
 //==============================================================================
 type
@@ -34,6 +35,13 @@ type
 
 //------------------------------------------------------------------------------
   ITCPConnection = interface(INetworkConnection)['{F2A27B45-BF65-4664-9273-5FD1F8EC7F6A}']
+    procedure Connect;
+    procedure Disconnect;
+    function GetConnectTimeout: Integer;
+    procedure SetConnectTimeout(const ATimeout: Integer);
+
+    property ConnectTimeout: Integer read GetConnectTimeout write SetConnectTimeout;
+
   end;
 
 //------------------------------------------------------------------------------
@@ -89,6 +97,34 @@ type
   end;
 
 //------------------------------------------------------------------------------
+  TTCPConnection = class(TInterfacedObject, IConnection, INetworkConnection,
+    ITCPConnection)
+  strict private
+    Connection: TIdTCPClient;
+
+    procedure Connect;
+    procedure Disconnect;
+    function GetAddress: string;
+    procedure SetAddress(const AAddr: string);
+    function GetPort: Word;
+    procedure SetPort(const APort: Word);
+    function GetReadTimeout: Integer;
+    procedure SetReadTimeout(const ATimeout: Integer);
+    function GetConnectTimeout: Integer;
+    procedure SetConnectTimeout(const ATimeout: Integer);
+    procedure Send(const AData: TBytes);
+    function Receive(const ACount: Integer): TBytes;
+    procedure Purge;
+    function Clone: IConnection;
+
+  public
+    constructor Create; overload;
+    constructor Create(const AAddr: string; const APort: Word; const AReadTimeout: Integer = 2000); overload;
+    destructor Destroy; override;
+
+  end;
+
+//------------------------------------------------------------------------------
 {$IFDEF MSWINDOWS}
   TCOMConnection = class(TInterfacedObject, ICOMConnection, IConnection)
   strict private
@@ -135,6 +171,10 @@ type
     class function NewUDP(AOwner: TComponent; const AAddr: string; const APort: Word;
       const AReadTimeout: Integer = 2000): IUDPConnection; overload;
 
+    class function NewTCP: ITCPConnection; overload;
+    class function NewTCP(const AAddr: string; const APort: Word;
+      const AReadTimeout: Integer = 2000): ITCPConnection; overload;
+
 {$IFDEF MSWINDOWS}
     class function NewCOM: ICOMConnection; overload;
     class function NewCOM(const APort: Byte; const ABaudrate: Integer;
@@ -168,6 +208,7 @@ constructor TUDPConnection.Create(AOwner: TComponent);
 begin
   inherited Create;
   Connection := TIdUdpClient.Create(AOwner);
+  Connection.ReceiveTimeout := 2000;
 end;
 
 //------------------------------------------------------------------------------
@@ -201,6 +242,7 @@ constructor TUDPConnection.Create;
 begin
   inherited;
   Connection := TIdUdpClient.Create;
+  Connection.ReceiveTimeout := 2000;
 end;
 
 //------------------------------------------------------------------------------
@@ -315,6 +357,19 @@ begin
 end;
 
 //------------------------------------------------------------------------------
+class function TConnections.NewTCP(const AAddr: string; const APort: Word;
+  const AReadTimeout: Integer): ITCPConnection;
+begin
+  Result := TTCPConnection.Create(AAddr, APort, AReadTimeout);
+end;
+
+//------------------------------------------------------------------------------
+class function TConnections.NewTCP: ITCPConnection;
+begin
+  Result := TTCPConnection.Create;
+end;
+
+//------------------------------------------------------------------------------
 {$IFDEF MSWINDOWS}
 
 class function TConnections.NewCOM: ICOMConnection;
@@ -328,6 +383,8 @@ class function TConnections.NewCOM(const APort: Byte; const ABaudrate,
 begin
   Result := TCOMConnection.Create(APort, ABaudrate, AReadTimeout);
 end;
+
+
 
 {$ENDIF}
 
@@ -522,6 +579,120 @@ end;
 function TMagicPacket.GetData: TBytes;
 begin
   Result := Data;
+end;
+
+//==============================================================================
+{ TTCPConnection }
+
+function TTCPConnection.Clone: IConnection;
+var
+  ANewConnection: ITCPConnection;
+begin
+  ANewConnection := TTCPConnection.Create(GetAddress, GetPort, GetReadTimeout);
+  ANewConnection.ConnectTimeout := GetConnectTimeout;
+  Result := ANewConnection;
+end;
+
+//------------------------------------------------------------------------------
+procedure TTCPConnection.Connect;
+begin
+  Connection.Connect;
+end;
+
+//------------------------------------------------------------------------------
+constructor TTCPConnection.Create(const AAddr: string; const APort: Word;
+  const AReadTimeout: Integer = 2000);
+begin
+  Create;
+  SetAddress(AAddr);
+  SetPort(APort);
+  SetReadTimeout(AReadTimeout);
+end;
+
+//------------------------------------------------------------------------------
+constructor TTCPConnection.Create;
+begin
+  inherited;
+  Connection := TIdTCPClient.Create;
+end;
+
+//------------------------------------------------------------------------------
+destructor TTCPConnection.Destroy;
+begin
+  Connection.Free;
+  inherited;
+end;
+
+//------------------------------------------------------------------------------
+procedure TTCPConnection.Disconnect;
+begin
+  Connection.Disconnect;
+end;
+
+//------------------------------------------------------------------------------
+function TTCPConnection.GetAddress: string;
+begin
+  Result := Connection.Host;
+end;
+
+//------------------------------------------------------------------------------
+function TTCPConnection.GetConnectTimeout: Integer;
+begin
+  Result := Connection.ConnectTimeout;
+end;
+
+//------------------------------------------------------------------------------
+function TTCPConnection.GetPort: Word;
+begin
+  Result := Connection.Port;
+end;
+
+//------------------------------------------------------------------------------
+function TTCPConnection.GetReadTimeout: Integer;
+begin
+  Result := Connection.ReadTimeout;
+end;
+
+//------------------------------------------------------------------------------
+procedure TTCPConnection.Purge;
+begin
+  Connection.IOHandler.InputBuffer.Clear;
+end;
+
+//------------------------------------------------------------------------------
+function TTCPConnection.Receive(const ACount: Integer): TBytes;
+begin
+  Connection.IOHandler.ReadBytes(TIdBytes(Result), ACount);
+end;
+
+//------------------------------------------------------------------------------
+procedure TTCPConnection.Send(const AData: TBytes);
+begin
+  Connection.IOHandler.Write(TIdBytes(AData));
+end;
+
+//------------------------------------------------------------------------------
+procedure TTCPConnection.SetAddress(const AAddr: string);
+begin
+  Connection.Host := AAddr;
+end;
+
+//------------------------------------------------------------------------------
+procedure TTCPConnection.SetConnectTimeout(const ATimeout: Integer);
+begin
+  Connection.ConnectTimeout := ATimeout;
+end;
+
+//------------------------------------------------------------------------------
+procedure TTCPConnection.SetPort(const APort: Word);
+begin
+  Connection.Port := APort;
+end;
+
+//------------------------------------------------------------------------------
+procedure TTCPConnection.SetReadTimeout(const ATimeout: Integer);
+begin
+  Connection.ReadTimeout := ATimeout;
 end;
 
 //------------------------------------------------------------------------------

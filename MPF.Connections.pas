@@ -614,6 +614,8 @@ constructor TTCPConnection.Create;
 begin
   inherited;
   Connection := TIdTCPClient.Create;
+  Connection.ConnectTimeout := 2000;
+  Connection.ReadTimeout := 2000;
 end;
 
 //------------------------------------------------------------------------------

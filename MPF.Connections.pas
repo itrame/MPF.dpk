@@ -445,6 +445,7 @@ begin
   RxTimer := TTimer.Create(nil);
   RxTimer.Enabled := false;
   RxTimer.OnTimer := RxTimeout;
+  RxTimer.Interval := 2000;
 end;
 
 //------------------------------------------------------------------------------

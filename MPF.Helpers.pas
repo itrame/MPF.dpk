@@ -20,6 +20,8 @@ type
     function GetUInt32(const APos: Integer): UInt32;
     function GetUInt64(const APos: Integer): UInt64;
     function GetBCD(const APos: Integer): Byte;
+    function ToHex(const APrefix, ASuffix, ASeparator: string): string; overload;
+    function ToHex: string; overload;
   end;
 
 //------------------------------------------------------------------------------
@@ -31,6 +33,12 @@ type
 //------------------------------------------------------------------------------
   TUInt32Helper = record helper for UInt32
     function ToBytes: TBytes;
+    function ToString: string;
+  end;
+
+//------------------------------------------------------------------------------
+  TBoolHelper = record helper for Boolean
+    function ToString(const ATrueStr, AFalseStr: string): string;
   end;
 
 //------------------------------------------------------------------------------
@@ -132,6 +140,28 @@ begin
   Result := (Self[APos] shl 8) or Self[APos+1];
 end;
 
+//------------------------------------------------------------------------------
+function TBytesHelper.ToHex: string;
+begin
+  Result := ToHex('', '', ' ');
+end;
+
+//------------------------------------------------------------------------------
+function TBytesHelper.ToHex(const APrefix, ASuffix, ASeparator: string): string;
+var
+  i: Integer;
+  AItemStr: string;
+
+begin
+  Result := '';
+  for i:=0 to Length(Self)-1 do begin
+    AItemStr := APrefix + IntToHex(Self[i], 2) + ASuffix;
+    Result := Result + AItemStr;
+    if i < Length(Self)-1 then Result := Result + ASeparator;
+  end;
+
+end;
+
 //==============================================================================
 { TStringHelper }
 
@@ -173,6 +203,18 @@ begin
   Result := AHrStr + ':' + AMinStr;
 end;
 
+//------------------------------------------------------------------------------
+function TUInt32Helper.ToString: string;
+begin
+  Result := IntToStr(Self);
+end;
 
+//==============================================================================
+{ TBoolHelper }
+
+function TBoolHelper.ToString(const ATrueStr, AFalseStr: string): string;
+begin
+  if Self then Result := ATrueStr else Result := AFalseStr;
+end;
 
 end.

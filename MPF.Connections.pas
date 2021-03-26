@@ -101,6 +101,10 @@ type
     ITCPConnection)
   strict private
     Connection: TIdTCPClient;
+    Address: string;
+    Port: Word;
+    ReadTimeout: Integer;
+    ConnectTimeout: Integer;
 
     procedure Connect;
     procedure Disconnect;
@@ -597,7 +601,19 @@ end;
 //------------------------------------------------------------------------------
 procedure TTCPConnection.Connect;
 begin
+  if Assigned(Connection) then
+    Disconnect;
+
+  if not Assigned(Connection) then begin
+    Connection := TIdTcpClient.Create;
+    Connection.Host := Address;
+    Connection.Port := Port;
+    Connection.ReadTimeout := ReadTimeout;
+    Connection.ConnectTimeout := ConnectTimeout;
+  end;
+
   Connection.Connect;
+
 end;
 
 //------------------------------------------------------------------------------
@@ -614,46 +630,49 @@ end;
 constructor TTCPConnection.Create;
 begin
   inherited;
-  Connection := TIdTCPClient.Create;
-  Connection.ConnectTimeout := 2000;
-  Connection.ReadTimeout := 2000;
+//  Connection := TIdTCPClient.Create;
+  ConnectTimeout := 2000;
+  ReadTimeout := 2000;
 end;
 
 //------------------------------------------------------------------------------
 destructor TTCPConnection.Destroy;
 begin
-  Connection.Free;
+  if Assigned(Connection) then Connection.Free;
   inherited;
 end;
 
 //------------------------------------------------------------------------------
 procedure TTCPConnection.Disconnect;
 begin
-  Connection.Disconnect;
+  if Assigned(Connection) then begin
+    Connection.Disconnect;
+    FreeAndNil(Connection);
+  end;
 end;
 
 //------------------------------------------------------------------------------
 function TTCPConnection.GetAddress: string;
 begin
-  Result := Connection.Host;
+  Result := Address;
 end;
 
 //------------------------------------------------------------------------------
 function TTCPConnection.GetConnectTimeout: Integer;
 begin
-  Result := Connection.ConnectTimeout;
+  Result := ConnectTimeout;
 end;
 
 //------------------------------------------------------------------------------
 function TTCPConnection.GetPort: Word;
 begin
-  Result := Connection.Port;
+  Result := Port;
 end;
 
 //------------------------------------------------------------------------------
 function TTCPConnection.GetReadTimeout: Integer;
 begin
-  Result := Connection.ReadTimeout;
+  Result := ReadTimeout;
 end;
 
 //------------------------------------------------------------------------------
@@ -665,37 +684,43 @@ end;
 //------------------------------------------------------------------------------
 function TTCPConnection.Receive(const ACount: Integer): TBytes;
 begin
-  Connection.IOHandler.ReadBytes(TIdBytes(Result), ACount);
+  if Assigned(Connection) then
+    Connection.IOHandler.ReadBytes(TIdBytes(Result), ACount)
+  else
+    raise Exception.Create('Not connected.');
 end;
 
 //------------------------------------------------------------------------------
 procedure TTCPConnection.Send(const AData: TBytes);
 begin
-  Connection.IOHandler.Write(TIdBytes(AData));
+  if Assigned(Connection) then
+    Connection.IOHandler.Write(TIdBytes(AData))
+  else
+    raise Exception.Create('Not connected.');
 end;
 
 //------------------------------------------------------------------------------
 procedure TTCPConnection.SetAddress(const AAddr: string);
 begin
-  Connection.Host := AAddr;
+  Address := AAddr;
 end;
 
 //------------------------------------------------------------------------------
 procedure TTCPConnection.SetConnectTimeout(const ATimeout: Integer);
 begin
-  Connection.ConnectTimeout := ATimeout;
+  ConnectTimeout := ATimeout;
 end;
 
 //------------------------------------------------------------------------------
 procedure TTCPConnection.SetPort(const APort: Word);
 begin
-  Connection.Port := APort;
+  Port := APort;
 end;
 
 //------------------------------------------------------------------------------
 procedure TTCPConnection.SetReadTimeout(const ATimeout: Integer);
 begin
-  Connection.ReadTimeout := ATimeout;
+  ReadTimeout := ATimeout;
 end;
 
 //------------------------------------------------------------------------------

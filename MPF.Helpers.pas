@@ -1,5 +1,5 @@
 unit MPF.Helpers;
-interface uses SysUtils, MPF.Types;
+interface uses SysUtils, MPF.Types, Vcl.StdCtrls;
 
 //==============================================================================
 type
@@ -39,6 +39,14 @@ type
 //------------------------------------------------------------------------------
   TBoolHelper = record helper for Boolean
     function ToString(const ATrueStr, AFalseStr: string): string;
+  end;
+
+//------------------------------------------------------------------------------
+  TListBoxHelper = class helper for TListBox
+    function FirstSelectedIndex: Integer;
+    function LastSelectedIndex: Integer;
+    function IsFirstSelected: Boolean;
+    function IsLastSelected: Boolean;
   end;
 
 //------------------------------------------------------------------------------
@@ -216,5 +224,47 @@ function TBoolHelper.ToString(const ATrueStr, AFalseStr: string): string;
 begin
   if Self then Result := ATrueStr else Result := AFalseStr;
 end;
+
+//==============================================================================
+{ TListBoxHelper }
+
+function TListBoxHelper.FirstSelectedIndex: Integer;
+var
+  i: Integer;
+begin
+  Result := -1;
+  for i:=0 to Self.Count-1 do
+    if Self.Selected[i] then begin
+      Result := i;
+      Break;
+    end;
+end;
+
+//------------------------------------------------------------------------------
+function TListBoxHelper.IsFirstSelected: Boolean;
+begin
+  Result := FirstSelectedIndex = 0;
+end;
+
+//------------------------------------------------------------------------------
+function TListBoxHelper.IsLastSelected: Boolean;
+begin
+  Result := LastSelectedIndex = (Self.Count-1);
+end;
+
+//------------------------------------------------------------------------------
+function TListBoxHelper.LastSelectedIndex: Integer;
+var
+  i: Integer;
+begin
+  Result := -1;
+  for i:=Self.Count-1 downto 0 do
+    if Self.Selected[i] then begin
+      Result := i;
+      Break;
+    end;
+end;
+
+//------------------------------------------------------------------------------
 
 end.

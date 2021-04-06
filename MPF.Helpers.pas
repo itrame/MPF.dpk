@@ -28,6 +28,7 @@ type
   TStringHelper = record helper for string
     function DeleteLeading(const AChar: Char): string;
     function DeleteEnding(const AChar: Char): string;
+    function ToBool(const ATrueStr, AFalseStr: string; const ADefault: Boolean = False): Boolean;
   end;
 
 //------------------------------------------------------------------------------
@@ -186,6 +187,24 @@ begin
   Result := Self;
   while Length(Result) > 0 do
     if Result[1] = AChar then Delete(Result, 1, 1) else Break;
+end;
+
+//------------------------------------------------------------------------------
+function TStringHelper.ToBool(const ATrueStr, AFalseStr: string;
+  const ADefault: Boolean): Boolean;
+begin
+  if UpperCase(Self) = UpperCase(ATrueStr) then begin
+    Result := true;
+    Exit;
+  end;
+
+  if UpperCase(Self) = UpperCase(AFalseStr) then begin
+    Result := false;
+    Exit;
+  end;
+
+  Result := ADefault;
+
 end;
 
 //==============================================================================

@@ -20,7 +20,11 @@ type
   end;
 
 //==============================================================================
-implementation uses Spring.Container;
+function NewEditableMACAddress: IEditableMACAddress;
+function NewMACAddress(const AData: TBytes): IMACAddress;
+
+//==============================================================================
+implementation
 
 //==============================================================================
 type
@@ -103,9 +107,15 @@ begin
 end;
 
 //==============================================================================
-initialization
-  GlobalContainer.RegisterType<TMACAddress>.
-    Implements<IMACAddress>.
-    Implements<IEditableMACAddress>;
+function NewEditableMACAddress: IEditableMACAddress;
+begin
+  Result := TMACAddress.Create;
+end;
+
+//------------------------------------------------------------------------------
+function NewMACAddress(const AData: TBytes): IMACAddress;
+begin
+  Result := TMACAddress.Create(AData);
+end;
 
 end.

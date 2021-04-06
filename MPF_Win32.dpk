@@ -1,6 +1,7 @@
 package MPF_Win32;
 
 {$R *.res}
+{$R 'Components\mpf_icons.dcr'}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
 {$ALIGN 8}
 {$ASSERTIONS ON}
@@ -45,6 +46,7 @@ contains
   MPF.Helpers in 'MPF.Helpers.pas',
   MPF.MAC in 'MPF.MAC.pas',
   MPF.Version in 'MPF.Version.pas',
-  MPF.AppInfo in 'MPF.AppInfo.pas';
+  MPF.AppInfo in 'MPF.AppInfo.pas',
+  MPF.MultiStateLamp in 'Components\MPF.MultiStateLamp.pas';
 
 end.

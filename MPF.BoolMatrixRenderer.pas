@@ -11,10 +11,22 @@ type
     function GetZoomY: Integer;
     procedure SetZoomY(const AZoomY: Integer);
     procedure Draw(AMatrix: IReadOnlyMatrix<Boolean>; ACanvas: TCanvas);
+    function GetTrueColor: TColor;
+    procedure SetTrueColor(const AColor: TColor);
+    function GetFalseColor: TColor;
+    procedure SetFalseColor(const AColor: TColor);
+    function IsTransparentTrue: Boolean;
+    procedure SetTransparentTrue(const AValue: Boolean);
+    function IsTransparentFalse: Boolean;
+    procedure SetTransparentFalse(const AValue: Boolean);
 
     property Position: TPoint read GetPosition write SetPosition;
     property ZoomX: Integer read GetZoomX write SetZoomX;
     property ZoomY:Integer read GetZoomY write SetZoomY;
+    property TrueColor: TColor read GetTrueColor write SetTrueColor;
+    property FalseColor: TColor read GetFalseColor write SetFalseColor;
+    property TransparentTrue: Boolean read IsTransparentTrue write SetTransparentTrue;
+    property TransparentFalse: Boolean read IsTransparentFalse write SetTransparentFalse;
 
   end;
 
@@ -30,6 +42,8 @@ type
   strict private
     Position: TPoint;
     ZoomX, ZoomY: Integer;
+    FalseColor, TrueColor: TColor;
+    TransparentTrue, TransparentFalse: Boolean;
 
     function GetPosition: TPoint;
     procedure SetPosition(const APosition: TPoint);
@@ -39,6 +53,14 @@ type
     procedure SetZoomY(const AZoomY: Integer);
     procedure Draw(AMatrix: IReadOnlyMatrix<Boolean>; ACanvas: TCanvas);
     function ValidateZoom(const AValue: Integer): Boolean;
+    function GetTrueColor: TColor;
+    procedure SetTrueColor(const AColor: TColor);
+    function GetFalseColor: TColor;
+    procedure SetFalseColor(const AColor: TColor);
+    function IsTransparentTrue: Boolean;
+    procedure SetTransparentTrue(const AValue: Boolean);
+    function IsTransparentFalse: Boolean;
+    procedure SetTransparentFalse(const AValue: Boolean);
 
   public
     constructor Create;
@@ -55,6 +77,10 @@ begin
   Position.Y := 0;
   ZoomX := 1;
   ZoomY := 1;
+  FalseColor := clWhite;
+  TrueColor := clBlack;
+  TransparentTrue := false;
+  TransparentFalse := true;
 end;
 
 //------------------------------------------------------------------------------
@@ -68,17 +94,34 @@ begin
       for Y:=0 to AMatrix.Height-1 do
         for ZX:=0 to ZoomX-1 do
           for ZY:=0 to ZoomY-1 do
-            if AMatrix[X,Y] then
-              ACanvas.Pixels[(ZoomX*X)+ZX-1+Position.X,(ZoomY*Y)+ZY-1+Position.Y] := clBlack;
+            if AMatrix[X,Y] then begin
+              if not TransparentTrue then
+                ACanvas.Pixels[(ZoomX*X)+ZX+Position.X,(ZoomY*Y)+ZY+Position.Y] := TrueColor;
+            end else begin
+              if not TransparentFalse then
+                ACanvas.Pixels[(ZoomX*X)+ZX+Position.X,(ZoomY*Y)+ZY+Position.Y] := FalseColor;
+            end;
   finally
     ACanvas.Unlock;
   end;
 end;
 
 //------------------------------------------------------------------------------
+function TBoolMatrixRenderer.GetFalseColor: TColor;
+begin
+  Result := FalseColor;
+end;
+
+//------------------------------------------------------------------------------
 function TBoolMatrixRenderer.GetPosition: TPoint;
 begin
   Result := Position;
+end;
+
+//------------------------------------------------------------------------------
+function TBoolMatrixRenderer.GetTrueColor: TColor;
+begin
+  Result := TrueColor;
 end;
 
 //------------------------------------------------------------------------------
@@ -94,9 +137,45 @@ begin
 end;
 
 //------------------------------------------------------------------------------
+function TBoolMatrixRenderer.IsTransparentFalse: Boolean;
+begin
+  Result := TransparentFalse;
+end;
+
+//------------------------------------------------------------------------------
+function TBoolMatrixRenderer.IsTransparentTrue: Boolean;
+begin
+  Result := TransparentTrue;
+end;
+
+//------------------------------------------------------------------------------
+procedure TBoolMatrixRenderer.SetFalseColor(const AColor: TColor);
+begin
+  FalseColor := AColor;
+end;
+
+//------------------------------------------------------------------------------
 procedure TBoolMatrixRenderer.SetPosition(const APosition: TPoint);
 begin
   Position := APosition;
+end;
+
+//------------------------------------------------------------------------------
+procedure TBoolMatrixRenderer.SetTransparentFalse(const AValue: Boolean);
+begin
+  TransparentFalse := AValue;
+end;
+
+//------------------------------------------------------------------------------
+procedure TBoolMatrixRenderer.SetTransparentTrue(const AValue: Boolean);
+begin
+  TransparentTrue := AValue;
+end;
+
+//------------------------------------------------------------------------------
+procedure TBoolMatrixRenderer.SetTrueColor(const AColor: TColor);
+begin
+  TrueColor := AColor;
 end;
 
 //------------------------------------------------------------------------------

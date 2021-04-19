@@ -6,7 +6,7 @@ type
   TByteHelper = record helper for Byte
     function GetBit(Index: Byte): Boolean;
     procedure SetBit(Index: Byte; const AValue: Boolean);
-    function ToStr: string;
+    function ToString: string;
     function Lo: Byte;
     function Hi: Byte;
     function BCDToInt: Integer;
@@ -29,6 +29,7 @@ type
     function DeleteLeading(const AChar: Char): string;
     function DeleteEnding(const AChar: Char): string;
     function ToBool(const ATrueStr, AFalseStr: string; const ADefault: Boolean = False): Boolean;
+    function ToInteger: Integer;
   end;
 
 //------------------------------------------------------------------------------
@@ -93,7 +94,7 @@ var
 
 begin
   if Index > 7 then
-    raise Exception.Create('GetBit for TByte - bit index: ' + Index.ToStr + ' > 7!');
+    raise Exception.Create('GetBit for TByte - bit index: ' + Index.ToString + ' > 7!');
 
   AMask := $01 shl Index;
   if AValue then
@@ -104,7 +105,7 @@ begin
 end;
 
 //------------------------------------------------------------------------------
-function TByteHelper.ToStr: string;
+function TByteHelper.ToString: string;
 begin
   Result := IntToStr(Self);
 end;
@@ -207,6 +208,12 @@ begin
 
 end;
 
+//------------------------------------------------------------------------------
+function TStringHelper.ToInteger: Integer;
+begin
+  Result := StrToInt(Self);
+end;
+
 //==============================================================================
 { TUInt32Helper }
 
@@ -224,8 +231,8 @@ function ToTimeStr(const AHour, AMin: Byte): string;
 var
   AHrStr,AMinStr: string;
 begin
-  AHrStr := AHour.ToStr;
-  AMinStr := AMin.ToStr;
+  AHrStr := AHour.ToString;
+  AMinStr := AMin.ToString;
   if Length(AMinStr) < 2 then AMinStr := '0' + AMinStr;
   Result := AHrStr + ':' + AMinStr;
 end;

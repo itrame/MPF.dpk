@@ -91,6 +91,7 @@ type
     procedure SetStateId(const AValue: Integer);
     procedure UpdatePanel;
     procedure TimerEvent(ASender: TObject);
+    procedure PanelClicked(ASender: TObject);
     function GetBevelOuter: TBevelCut;
     procedure SetBevelOuter(const AValue: TBevelCut);
     function GetActiveState: TLampState;
@@ -111,6 +112,8 @@ type
     property BevelOuter: TBevelCut read GetBevelOuter write SetBevelOuter;
     property ActiveState: TLampState read GetActiveState;
     property StateName: string read GetStateName write SetStateName;
+
+    property OnClick;
 
   end;
 
@@ -251,8 +254,8 @@ begin
   if AValue = '' then
     raise Exception.Create('State name can not be empty.');
 
-  if States.NameExists(AValue) then
-    raise Exception.Create('State: ' + AValue + ' already exists.');  
+  if States.NameExists(AValue) and (States.IndexOfName(AValue) <> Index) then
+    raise Exception.Create('State: ' + AValue + ' already exists.');
     
   FStateName := AValue;
   Changed(false);
@@ -388,6 +391,7 @@ begin
   Panel.Align := alClient;
   Panel.BevelOuter := bvLowered;
   Panel.ParentBackground := false;
+  Panel.OnClick := PanelClicked;
 
   FStateId := -1;
 
@@ -423,6 +427,12 @@ end;
 function TMpfMultiStateLamp.GetStateName: string;
 begin
   if Assigned(ActiveState) then Result := ActiveState.StateName else Result := '';
+end;
+
+//------------------------------------------------------------------------------
+procedure TMpfMultiStateLamp.PanelClicked(ASender: TObject);
+begin
+  if Assigned(OnClick) then OnClick(Self);
 end;
 
 //------------------------------------------------------------------------------

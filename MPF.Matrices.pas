@@ -15,6 +15,7 @@ type
     procedure GetData(var AData: TArray<TArray<T>>);
     function PositionOf(AItem: T; AComparer: IEqualityComparer<T>): TPoint; overload;
     function PositionOf(AItem: T): TPoint; overload;
+    function Clone: IInterface;
 
     property Items[X,Y: Integer]: T read GetItem; default;
     property Width: Integer read GetWidth;
@@ -77,6 +78,8 @@ type
     function RowExists(const ARow: Integer): Boolean;
     function PositionOf(AItem: T; AComparer: IEqualityComparer<T>): TPoint; overload;
     function PositionOf(AItem: T): TPoint; overload;
+    function Clone: IInterface;
+    procedure CopyTo(ADest: IInterface);
 
   strict protected
     procedure PasteRow(const X, Y: Integer; const ARow: TArray<T>);
@@ -142,6 +145,28 @@ begin
       if Equal(X, Y, AItem, AComparer) then
         Result := Result + 1;
     end;
+
+end;
+
+//------------------------------------------------------------------------------
+function TMatrixOf<T>.Clone: IInterface;
+begin
+  Result := TMatrices.NewMatrix<T>;
+  CopyTo(Result);
+end;
+
+//------------------------------------------------------------------------------
+procedure TMatrixOf<T>.CopyTo(ADest: IInterface);
+var
+  ADestObject: TObject;
+  ADestMatrix: TMatrixOf<T>;
+
+begin
+  ADestObject := ADest as TObject;
+  if ADestObject is TMatrixOf<T> then begin
+    ADestMatrix := ADestObject as TMatrixOf<T>;
+    ADestMatrix.SetData(Items);
+  end;
 
 end;
 
@@ -296,11 +321,13 @@ end;
 procedure TMatrixOf<T>.SetData(AData: TArray<TArray<T>>);
 var
   Y,X: Integer;
+
 begin
   SetSize(GetMaxLength(AData), Length(AData));
   for Y:=0 to Length(AData)-1 do
     for X:=0 to Length(AData[Y])-1 do
       Items[Y,X] := AData[Y,X];
+
 end;
 
 //------------------------------------------------------------------------------

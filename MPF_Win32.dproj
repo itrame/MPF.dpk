@@ -154,7 +154,7 @@
         <DCCReference Include="MPF.AppInfo.pas"/>
         <DCCReference Include="Components\MPF.MultiStateLamp.pas"/>
         <DCCReference Include="MPF.Streams.pas"/>
-        <DCCReference Include="MPF.BoolMatrixRenderer.pas"/>
+        <DCCReference Include="MPF.BoolMatrixRender.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

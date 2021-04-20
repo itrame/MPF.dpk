@@ -1,9 +1,9 @@
-unit MPF.BoolMatrixRenderer;
+unit MPF.BoolMatrixRender;
 interface uses System.Types, Vcl.Graphics, MPF.Matrices;
 
 //==============================================================================
 type
-  IBoolMatrixRenderer = interface['{094CD9F9-0786-4288-B324-48D6216FFDB6}']
+  IBoolMatrixRender = interface['{094CD9F9-0786-4288-B324-48D6216FFDB6}']
     function GetPosition: TPoint;
     procedure SetPosition(const APosition: TPoint);
     function GetZoomX: Integer;
@@ -31,14 +31,14 @@ type
   end;
 
 //==============================================================================
-function NewBoolMatrixRender: IBoolMatrixRenderer;
+function NewBoolMatrixRender: IBoolMatrixRender;
 
 //==============================================================================
 implementation uses SysUtils;
 
 //==============================================================================
 type
-  TBoolMatrixRenderer = class(TInterfacedObject, IBoolMatrixRenderer)
+  TBoolMatrixRender = class(TInterfacedObject, IBoolMatrixRender)
   strict private
     Position: TPoint;
     ZoomX, ZoomY: Integer;
@@ -70,7 +70,7 @@ type
 //==============================================================================
 { TBoolMatrixRenderer }
 
-constructor TBoolMatrixRenderer.Create;
+constructor TBoolMatrixRender.Create;
 begin
   inherited;
   Position.X := 0;
@@ -84,7 +84,7 @@ begin
 end;
 
 //------------------------------------------------------------------------------
-procedure TBoolMatrixRenderer.Draw(AMatrix: IReadOnlyMatrix<Boolean>; ACanvas: TCanvas);
+procedure TBoolMatrixRender.Draw(AMatrix: IReadOnlyMatrix<Boolean>; ACanvas: TCanvas);
 var
   X, Y, ZX, ZY: Integer;
 begin
@@ -107,79 +107,79 @@ begin
 end;
 
 //------------------------------------------------------------------------------
-function TBoolMatrixRenderer.GetFalseColor: TColor;
+function TBoolMatrixRender.GetFalseColor: TColor;
 begin
   Result := FalseColor;
 end;
 
 //------------------------------------------------------------------------------
-function TBoolMatrixRenderer.GetPosition: TPoint;
+function TBoolMatrixRender.GetPosition: TPoint;
 begin
   Result := Position;
 end;
 
 //------------------------------------------------------------------------------
-function TBoolMatrixRenderer.GetTrueColor: TColor;
+function TBoolMatrixRender.GetTrueColor: TColor;
 begin
   Result := TrueColor;
 end;
 
 //------------------------------------------------------------------------------
-function TBoolMatrixRenderer.GetZoomX: Integer;
+function TBoolMatrixRender.GetZoomX: Integer;
 begin
   Result := ZoomX;
 end;
 
 //------------------------------------------------------------------------------
-function TBoolMatrixRenderer.GetZoomY: Integer;
+function TBoolMatrixRender.GetZoomY: Integer;
 begin
   Result := ZoomY;
 end;
 
 //------------------------------------------------------------------------------
-function TBoolMatrixRenderer.IsTransparentFalse: Boolean;
+function TBoolMatrixRender.IsTransparentFalse: Boolean;
 begin
   Result := TransparentFalse;
 end;
 
 //------------------------------------------------------------------------------
-function TBoolMatrixRenderer.IsTransparentTrue: Boolean;
+function TBoolMatrixRender.IsTransparentTrue: Boolean;
 begin
   Result := TransparentTrue;
 end;
 
 //------------------------------------------------------------------------------
-procedure TBoolMatrixRenderer.SetFalseColor(const AColor: TColor);
+procedure TBoolMatrixRender.SetFalseColor(const AColor: TColor);
 begin
   FalseColor := AColor;
 end;
 
 //------------------------------------------------------------------------------
-procedure TBoolMatrixRenderer.SetPosition(const APosition: TPoint);
+procedure TBoolMatrixRender.SetPosition(const APosition: TPoint);
 begin
   Position := APosition;
 end;
 
 //------------------------------------------------------------------------------
-procedure TBoolMatrixRenderer.SetTransparentFalse(const AValue: Boolean);
+procedure TBoolMatrixRender.SetTransparentFalse(const AValue: Boolean);
 begin
   TransparentFalse := AValue;
 end;
 
 //------------------------------------------------------------------------------
-procedure TBoolMatrixRenderer.SetTransparentTrue(const AValue: Boolean);
+procedure TBoolMatrixRender.SetTransparentTrue(const AValue: Boolean);
 begin
   TransparentTrue := AValue;
 end;
 
 //------------------------------------------------------------------------------
-procedure TBoolMatrixRenderer.SetTrueColor(const AColor: TColor);
+procedure TBoolMatrixRender.SetTrueColor(const AColor: TColor);
 begin
   TrueColor := AColor;
 end;
 
 //------------------------------------------------------------------------------
-procedure TBoolMatrixRenderer.SetZoomX(const AZoomX: Integer);
+procedure TBoolMatrixRender.SetZoomX(const AZoomX: Integer);
 begin
   if AZoomX = ZoomX then Exit;
   if not ValidateZoom(AZoomX) then Exit;
@@ -187,7 +187,7 @@ begin
 end;
 
 //------------------------------------------------------------------------------
-procedure TBoolMatrixRenderer.SetZoomY(const AZoomY: Integer);
+procedure TBoolMatrixRender.SetZoomY(const AZoomY: Integer);
 begin
   if AZoomY = ZoomY then Exit;
   if not ValidateZoom(AZoomY) then Exit;
@@ -195,7 +195,7 @@ begin
 end;
 
 //------------------------------------------------------------------------------
-function TBoolMatrixRenderer.ValidateZoom(const AValue: Integer): Boolean;
+function TBoolMatrixRender.ValidateZoom(const AValue: Integer): Boolean;
 begin
   if AValue <= 0 then raise Exception.Create(
     'Invalid Zoom value: ' + AValue.ToString + '. Zoom value must be > 0.');
@@ -203,9 +203,9 @@ begin
 end;
 
 //==============================================================================
-function NewBoolMatrixRender: IBoolMatrixRenderer;
+function NewBoolMatrixRender: IBoolMatrixRender;
 begin
-  Result := TBoolMatrixRenderer.Create;
+  Result := TBoolMatrixRender.Create;
 end;
 
 end.

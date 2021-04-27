@@ -167,29 +167,42 @@ type
 {$ENDIF}
 
 //==============================================================================
-  TConnections = class
-    class function NewUDP: IUDPConnection; overload;
-    class function NewUDP(AOwner: TComponent): IUDPConnection; overload;
-    class function NewUDP(const AAddr: string; const APort: Word;
-      const AReadTimeout: Integer = 2000): IUDPConnection; overload;
-    class function NewUDP(AOwner: TComponent; const AAddr: string; const APort: Word;
-      const AReadTimeout: Integer = 2000): IUDPConnection; overload;
-
-    class function NewTCP: ITCPConnection; overload;
-    class function NewTCP(const AAddr: string; const APort: Word;
-      const AReadTimeout: Integer = 2000): ITCPConnection; overload;
-
-{$IFDEF MSWINDOWS}
-    class function NewCOM: ICOMConnection; overload;
-    class function NewCOM(const APort: Byte; const ABaudrate: Integer;
-      const AReadTimeout: Integer = 2000): ICOMConnection; overload;
-{$ENDIF}
-
-  end;
+//  TConnections = class
+//    class function NewUDP: IUDPConnection; overload;
+//    class function NewUDP(AOwner: TComponent): IUDPConnection; overload;
+//    class function NewUDP(const AAddr: string; const APort: Word;
+//      const AReadTimeout: Integer = 2000): IUDPConnection; overload;
+//    class function NewUDP(AOwner: TComponent; const AAddr: string; const APort: Word;
+//      const AReadTimeout: Integer = 2000): IUDPConnection; overload;
+//
+//    class function NewTCP: ITCPConnection; overload;
+//    class function NewTCP(const AAddr: string; const APort: Word;
+//      const AReadTimeout: Integer = 2000): ITCPConnection; overload;
+//
+//{$IFDEF MSWINDOWS}
+//    class function NewCOM: ICOMConnection; overload;
+//    class function NewCOM(const APort: Byte; const ABaudrate: Integer;
+//      const AReadTimeout: Integer = 2000): ICOMConnection; overload;
+//{$ENDIF}
+//
+//  end;
 
 //==============================================================================
 function NewMagicPacket(AMAC: IMACAddress): IMagicPacket;
 
+function NewUDP: IUDPConnection; overload;
+function NewUDP(const AAddr: string; const APort: Word;
+      const AReadTimeout: Integer = 2000): IUDPConnection; overload;
+
+function NewTCP: ITCPConnection; overload;
+function NewTCP(const AAddr: string; const APort: Word; const ATimeout: Integer = 2000):
+  ITCPConnection; overload;
+
+{$IFDEF MSWINDOWS}
+function NewCOM: ICOMConnection; overload;
+function NewCOM(const APort: Byte; const ABaudrate: Integer;
+      const AReadTimeout: Integer = 2000): ICOMConnection; overload;
+{$ENDIF}
 
 //==============================================================================
 implementation uses IdGlobal {$IFDEF MSWINDOWS}, Vcl.Forms {$ENDIF};
@@ -335,62 +348,62 @@ end;
 //==============================================================================
 { TConnections }
 
-class function TConnections.NewUDP: IUDPConnection;
-begin
-  Result := TUDPConnection.Create;
-end;
-
-//------------------------------------------------------------------------------
-class function TConnections.NewUDP(AOwner: TComponent): IUDPConnection;
-begin
-  Result := TUDPConnection.Create(AOwner);
-end;
-
-//------------------------------------------------------------------------------
-class function TConnections.NewUDP(const AAddr: string; const APort: Word;
-  const AReadTimeout: Integer = 2000): IUDPConnection;
-begin
-  Result := TUDPConnection.Create(AAddr, APort, AReadTimeout);
-end;
-
-//------------------------------------------------------------------------------
-class function TConnections.NewUDP(AOwner: TComponent; const AAddr: string;
-  const APort: Word; const AReadTimeout: Integer): IUDPConnection;
-begin
-  Result := TUDPConnection.Create(AOwner, AAddr, APort, AReadTimeout);
-end;
-
-//------------------------------------------------------------------------------
-class function TConnections.NewTCP(const AAddr: string; const APort: Word;
-  const AReadTimeout: Integer): ITCPConnection;
-begin
-  Result := TTCPConnection.Create(AAddr, APort, AReadTimeout);
-end;
-
-//------------------------------------------------------------------------------
-class function TConnections.NewTCP: ITCPConnection;
-begin
-  Result := TTCPConnection.Create;
-end;
-
-//------------------------------------------------------------------------------
-{$IFDEF MSWINDOWS}
-
-class function TConnections.NewCOM: ICOMConnection;
-begin
-  Result := TCOMConnection.Create;
-end;
-
-
-class function TConnections.NewCOM(const APort: Byte; const ABaudrate,
-  AReadTimeout: Integer): ICOMConnection;
-begin
-  Result := TCOMConnection.Create(APort, ABaudrate, AReadTimeout);
-end;
-
-
-
-{$ENDIF}
+//class function TConnections.NewUDP: IUDPConnection;
+//begin
+//  Result := TUDPConnection.Create;
+//end;
+//
+////------------------------------------------------------------------------------
+//class function TConnections.NewUDP(AOwner: TComponent): IUDPConnection;
+//begin
+//  Result := TUDPConnection.Create(AOwner);
+//end;
+//
+////------------------------------------------------------------------------------
+//class function TConnections.NewUDP(const AAddr: string; const APort: Word;
+//  const AReadTimeout: Integer = 2000): IUDPConnection;
+//begin
+//  Result := TUDPConnection.Create(AAddr, APort, AReadTimeout);
+//end;
+//
+////------------------------------------------------------------------------------
+//class function TConnections.NewUDP(AOwner: TComponent; const AAddr: string;
+//  const APort: Word; const AReadTimeout: Integer): IUDPConnection;
+//begin
+//  Result := TUDPConnection.Create(AOwner, AAddr, APort, AReadTimeout);
+//end;
+//
+////------------------------------------------------------------------------------
+//class function TConnections.NewTCP(const AAddr: string; const APort: Word;
+//  const AReadTimeout: Integer): ITCPConnection;
+//begin
+//  Result := TTCPConnection.Create(AAddr, APort, AReadTimeout);
+//end;
+//
+////------------------------------------------------------------------------------
+//class function TConnections.NewTCP: ITCPConnection;
+//begin
+//  Result := TTCPConnection.Create;
+//end;
+//
+////------------------------------------------------------------------------------
+//{$IFDEF MSWINDOWS}
+//
+//class function TConnections.NewCOM: ICOMConnection;
+//begin
+//  Result := TCOMConnection.Create;
+//end;
+//
+//
+//class function TConnections.NewCOM(const APort: Byte; const ABaudrate,
+//  AReadTimeout: Integer): ICOMConnection;
+//begin
+//  Result := TCOMConnection.Create(APort, ABaudrate, AReadTimeout);
+//end;
+//
+//
+//
+//{$ENDIF}
 
 //==============================================================================
 { TCOMConnection }
@@ -723,10 +736,55 @@ begin
   ReadTimeout := ATimeout;
 end;
 
-//------------------------------------------------------------------------------
+//==============================================================================
 function NewMagicPacket(AMAC: IMACAddress): IMagicPacket;
 begin
   Result := TMagicPacket.Create(AMAC);
 end;
+
+//------------------------------------------------------------------------------
+function NewUDP: IUDPConnection;
+begin
+  Result := TUDPConnection.Create;
+end;
+
+//------------------------------------------------------------------------------
+function NewUDP(const AAddr: string; const APort: Word; const AReadTimeout: Integer = 2000):
+  IUDPConnection; overload;
+begin
+  Result := TUDPConnection.Create(AAddr, APort, AReadTimeout);
+end;
+
+//------------------------------------------------------------------------------
+function NewTCP: ITCPConnection;
+begin
+  Result := TTCPConnection.Create;
+end;
+
+//------------------------------------------------------------------------------
+function NewTCP(const AAddr: string; const APort: Word; const ATimeout: Integer = 2000):
+  ITCPConnection;
+begin
+  Result := TTcpConnection.Create(AAddr, APort, ATimeout);
+  Result.ConnectTimeout := ATimeout;
+end;
+
+//------------------------------------------------------------------------------
+{$IFDEF MSWINDOWS}
+
+function NewCOM: ICOMConnection;
+begin
+  Result := TCOMConnection.Create;
+end;
+
+//------------------------------------------------------------------------------
+function NewCOM(const APort: Byte; const ABaudrate: Integer;
+      const AReadTimeout: Integer = 2000): ICOMConnection;
+begin
+  Result := TCOMConnection.Create(APort, ABaudrate, AReadTimeout);
+end;
+
+{$ENDIF}
+//==============================================================================
 
 end.

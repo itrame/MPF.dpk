@@ -1,5 +1,5 @@
 unit MPF.Streams;
-interface
+interface uses SysUtils;
 //==============================================================================
 type
   IStream = interface['{32D84309-8750-4E9F-844F-8E15782C2C2E}']
@@ -13,13 +13,10 @@ type
 
   end;
 
-//------------------------------------------------------------------------------
-  IFileStream = interface(IStream)['{53EBEAA1-8F9E-4D63-90E4-A1006F9685C4}']
-  end;
-
 //==============================================================================
   TStreams = class
-    class function NewFileStream(const AFileName: string; const AMode: Word): IFileStream;
+    class function NewStream(const AFileName: string; const AMode: Word): IStream; overload;
+    class function NewStream(const ABytes: TBytes): IStream; overload;
   end;
 
 //==============================================================================
@@ -27,7 +24,7 @@ implementation uses Classes;
 
 //==============================================================================
 type
-  TmpfStream = class(TInterfacedObject)
+  TmpfStream = class(TInterfacedObject, IStream)
   strict protected
     Stream: TStream;
 
@@ -38,21 +35,38 @@ type
     function ReadAnsiString8: string;
 
   public
-   destructor Destroy; override;
-
-  end;
-
-//------------------------------------------------------------------------------
-  TmpfFileStream = class(TmpfStream, IStream, IFileStream)
-  public
     constructor Create(const AFileName: string; const AMode: Word); overload;
     constructor Create(const AFileName: string; const AMode: Word; ARights: Cardinal); overload;
+    constructor Create(const ABytes: TBytes); overload;
+    destructor Destroy; override;
 
   end;
 
 //==============================================================================
 { TMpfStream }
 
+constructor TMpfStream.Create(const AFileName: string; const AMode: Word);
+begin
+  inherited Create;
+  Stream := TFileStream.Create(AFileName, AMode);
+end;
+
+//------------------------------------------------------------------------------
+constructor TmpfStream.Create(const AFileName: string; const AMode: Word;
+  ARights: Cardinal);
+begin
+  inherited Create;
+  Stream := TFileStream.Create(AFileName, AMode, ARights);
+end;
+
+//------------------------------------------------------------------------------
+constructor TmpfStream.Create(const ABytes: TBytes);
+begin
+  inherited Create;
+  Stream := TBytesStream.Create(ABytes);
+end;
+
+//------------------------------------------------------------------------------
 destructor TMpfStream.Destroy;
 begin
   if Stream <> nil then Stream.Free;
@@ -103,30 +117,20 @@ begin
   Result := AValue;
 end;
 
-//==============================================================================
-{ TMpfFileStream }
-
-constructor TMpfFileStream.Create(const AFileName: string; const AMode: Word);
-begin
-  inherited Create;
-  Stream := TFileStream.Create(AFileName, AMode);
-end;
-
-//------------------------------------------------------------------------------
-constructor TMpfFileStream.Create(const AFileName: string; const AMode: Word;
-  ARights: Cardinal);
-begin
-  inherited Create;
-  Stream := TFileStream.Create(AFileName, AMode, ARights);
-end;
 
 //==============================================================================
 { TStreams }
 
-class function TStreams.NewFileStream(const AFileName: string;
-  const AMode: Word): IFileStream;
+class function TStreams.NewStream(const ABytes: TBytes): IStream;
 begin
-  Result := TMpfFileStream.Create(AFileName, AMode);
+  Result := TMpfStream.Create(ABytes);
+end;
+
+//------------------------------------------------------------------------------
+class function TStreams.NewStream(const AFileName: string;
+  const AMode: Word): IStream;
+begin
+  Result := TMpfStream.Create(AFileName, AMode);
 end;
 
 

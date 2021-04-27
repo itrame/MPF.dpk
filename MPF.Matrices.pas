@@ -3,6 +3,8 @@ interface uses MPF.Converters, System.Generics.Defaults, MPF.Types, System.Types
 
 //==============================================================================
 type
+  IMatrix<T> = interface;
+
   IReadOnlyMatrix<T> = interface['{4AB3CBEE-7E2E-499E-BFF0-D85D41B768A3}']
     function GetItem(X,Y: Integer): T;
     function GetWidth: Integer;
@@ -15,7 +17,7 @@ type
     procedure GetData(var AData: TArray<TArray<T>>);
     function PositionOf(AItem: T; AComparer: IEqualityComparer<T>): TPoint; overload;
     function PositionOf(AItem: T): TPoint; overload;
-    function Clone: IInterface;
+    function Clone: IMatrix<T>;
 
     property Items[X,Y: Integer]: T read GetItem; default;
     property Width: Integer read GetWidth;
@@ -78,7 +80,7 @@ type
     function RowExists(const ARow: Integer): Boolean;
     function PositionOf(AItem: T; AComparer: IEqualityComparer<T>): TPoint; overload;
     function PositionOf(AItem: T): TPoint; overload;
-    function Clone: IInterface;
+    function Clone: IMatrix<T>;
     procedure CopyTo(ADest: IInterface);
 
   strict protected
@@ -149,9 +151,9 @@ begin
 end;
 
 //------------------------------------------------------------------------------
-function TMatrixOf<T>.Clone: IInterface;
+function TMatrixOf<T>.Clone: IMatrix<T>;
 begin
-  Result := TMatrices.NewMatrix<T>;
+  Result := TMatrixOf<T>.Create;
   CopyTo(Result);
 end;
 

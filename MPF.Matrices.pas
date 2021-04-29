@@ -18,10 +18,12 @@ type
     function PositionOf(AItem: T; AComparer: IEqualityComparer<T>): TPoint; overload;
     function PositionOf(AItem: T): TPoint; overload;
     function Clone: IMatrix<T>;
+    function GetSize: UInt64;
 
     property Items[X,Y: Integer]: T read GetItem; default;
     property Width: Integer read GetWidth;
     property Height: Integer read GetHeight;
+    property Size: UInt64 read GetSize;
 
   end;
 
@@ -37,6 +39,11 @@ type
     procedure SetSize(const AWidth, AHeight: Integer);
     procedure SetData(AData: TArray<TArray<T>>);
     procedure Fill(const AValue: T);
+    procedure MultiplyX(const AFactor: Integer);
+    procedure RotateRight;
+    procedure RotateLeft;
+    procedure RotateUpsideDown;
+    procedure FillColumn(const AColumn: Integer; const AValue: T);
 
     property Items[X,Y: Integer]: T read GetItem write SetItem; default;
     property Width: Integer read GetWidth write SetWidth;
@@ -55,6 +62,7 @@ type
     procedure XorMask(const X, Y: Integer; AMask: TArray<TArray<Boolean>>); overload;
     procedure XorMask(const X, Y: Integer; AMask: IReadOnlyMatrix<Boolean>); overload;
     procedure Invert;
+    function Clone: IBoolMatrix;
   end;
 
 //------------------------------------------------------------------------------
@@ -81,12 +89,18 @@ type
     function PositionOf(AItem: T; AComparer: IEqualityComparer<T>): TPoint; overload;
     function PositionOf(AItem: T): TPoint; overload;
     function Clone: IMatrix<T>;
-    procedure CopyTo(ADest: IInterface);
+    function GetSize: UInt64;
+    procedure MultiplyX(const AFactor: Integer);
+    procedure RotateLeft;
+    procedure RotateRight;
+    procedure RotateUpsideDown;
+    procedure FillColumn(const AColumn: Integer; const AValue: T);
 
   strict protected
     procedure PasteRow(const X, Y: Integer; const ARow: TArray<T>);
     function GetHeight: Integer;
     function GetRow(const ARow: Integer): TArray<T>;
+    procedure CopyTo(ADest: IInterface); virtual;
 
   public
     constructor Create(const AWidth, AHeight: Integer); overload;
@@ -106,6 +120,7 @@ type
     procedure XorMask(const X, Y: Integer; AMask: TArray<TArray<Boolean>>); overload;
     procedure XorMask(const X, Y: Integer; AMask: IReadOnlyMatrix<Boolean>); overload;
     procedure Invert;
+    function Clone: IBoolMatrix;
   end;
 
 //==============================================================================
@@ -214,6 +229,18 @@ begin
 end;
 
 //------------------------------------------------------------------------------
+procedure TMatrixOf<T>.FillColumn(const AColumn: Integer; const AValue: T);
+var
+  aY,aX: Integer;
+begin
+  for aY:=0 to GetHeight-1 do begin
+    for aX:=0 to GetWidth-1 do begin
+      if aX = aColumn then Items[aY,aX] := aValue;
+    end;
+  end;
+end;
+
+//------------------------------------------------------------------------------
 procedure TMatrixOf<T>.GetData(var AData: TArray<TArray<T>>);
 var
   Y, X, i: Integer;
@@ -257,9 +284,42 @@ begin
 end;
 
 //------------------------------------------------------------------------------
+function TMatrixOf<T>.GetSize: UInt64;
+begin
+  Result := GetHeight * GetWidth;
+end;
+
+//------------------------------------------------------------------------------
 function TMatrixOf<T>.GetWidth: Integer;
 begin
   if GetHeight > 0 then Result := Length(Items[0]) else Result := 0;
+end;
+
+//------------------------------------------------------------------------------
+procedure TMatrixOf<T>.MultiplyX(const AFactor: Integer);
+var
+  i, AX: Integer;
+  AResult: IMatrix<T>;
+  AY: Integer;
+
+begin
+  if AFactor < 1 then
+    raise Exception.Create('Multiply Factor can not be < 1');
+
+  if AFactor = 1 then Exit;
+
+  AResult := Clone;
+  AResult.Width := AResult.Width * AFactor;
+
+  for AX:=0 to GetWidth-1 do begin
+    for i:=0 to AFactor-1 do begin
+      for AY:=0 to GetHeight-1 do
+        AResult[(AX*AFactor)+i,AY] := GetItem(AX, AY);
+    end;
+  end;
+
+  AResult.GetData(Items);
+
 end;
 
 //------------------------------------------------------------------------------
@@ -310,6 +370,60 @@ begin
       Break;
     end;
   end;
+
+end;
+
+//------------------------------------------------------------------------------
+procedure TMatrixOf<T>.RotateRight;
+var
+  AResult: IMatrix<T>;
+  aX,aY: Integer;
+
+begin
+  AResult := TMatrices.NewMatrix<T>(GetHeight, GetWidth);
+
+  for aY:=0 to AResult.Height-1 do begin
+    for aX:=0 to AResult.Width-1 do
+      AResult[aX,aY] := Items[AResult.Width-aX-1, aY];
+  end;
+
+  AResult.GetData(Items);
+
+end;
+
+//------------------------------------------------------------------------------
+procedure TMatrixOf<T>.RotateLeft;
+var
+  AResult: IMatrix<T>;
+  aX,aY: Integer;
+
+begin
+  AResult := TMatrices.NewMatrix<T>(GetHeight, GetWidth);
+
+  for aY:=0 to AResult.Height-1 do begin
+    for aX:=0 to AResult.Width-1 do
+      AResult[aX,aY] := Items[aX, AResult.Height-aY-1];
+  end;
+
+  AResult.GetData(Items);
+
+end;
+
+//------------------------------------------------------------------------------
+procedure TMatrixOf<T>.RotateUpsideDown;
+var
+  aX,aY: Integer;
+  AResult: IMatrix<T>;
+
+begin
+  AResult := TMatrices.NewMatrix<T>(GetWidth, GetHeight);
+
+  for aY:=0 to AResult.Height-1 do begin
+    for aX:=0 to AResult.Width-1 do
+      AResult[aX,aY] := Items[AResult.Height-aY-1, AResult.Width-aX-1];
+  end;
+
+  AResult.GetData(Items);
 
 end;
 
@@ -433,6 +547,13 @@ end;
 procedure TBoolMatrix.AndMask(const X,Y: Integer; AMask: IReadOnlyMatrix<Boolean>);
 begin
   Mask(X, Y, AMask, _AND);
+end;
+
+//------------------------------------------------------------------------------
+function TBoolMatrix.Clone: IBoolMatrix;
+begin
+  Result := TBoolMatrix.Create;
+  CopyTo(Result);
 end;
 
 //------------------------------------------------------------------------------

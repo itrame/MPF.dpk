@@ -46,9 +46,10 @@ contains
   MPF.Helpers in 'MPF.Helpers.pas',
   MPF.MAC in 'MPF.MAC.pas',
   MPF.Version in 'MPF.Version.pas',
-  MPF.AppInfo in 'MPF.AppInfo.pas',
   MPF.MultiStateLamp in 'Components\MPF.MultiStateLamp.pas',
   MPF.Streams in 'MPF.Streams.pas',
-  MPF.BoolMatrixRender in 'MPF.BoolMatrixRender.pas';
+  MPF.BoolMatrixRender in 'MPF.BoolMatrixRender.pas',
+  MPF.AppInfo in 'Components\MPF.AppInfo.pas',
+  MPF.Persistent in 'Components\MPF.Persistent.pas';
 
 end.

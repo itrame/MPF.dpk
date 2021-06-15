@@ -40,6 +40,7 @@ type
     function ToBool(const ATrueStr, AFalseStr: string; const ADefault: Boolean = False): Boolean;
     function ToInteger: Integer;
     function IsOnlyDigits: Boolean;
+    function ToBytes: TBytes;
   end;
 
 //------------------------------------------------------------------------------
@@ -252,6 +253,15 @@ begin
 
   Result := ADefault;
 
+end;
+
+//------------------------------------------------------------------------------
+function TStringHelper.ToBytes: TBytes;
+var
+  i: Integer;
+begin
+  Result := [];
+  for i:=1 to Length(Self) do Result := Result + [Byte(Self[i])];
 end;
 
 //------------------------------------------------------------------------------

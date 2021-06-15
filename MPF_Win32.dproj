@@ -106,7 +106,7 @@
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_DcpOutput>$(BDSCOMMONDIR)\Dcp\$(Platform)</DCC_DcpOutput>
-        <DCC_UsePackage>rtl;vcl;IndySystem;IndyCore;CiaComPortPackage;Spring.Core;$(DCC_UsePackage)</DCC_UsePackage>
+        <DCC_UsePackage>rtl;vcl;IndySystem;IndyCore;CiaComPortPackage;Spring.Core;ZintPackage;TTgPuttyClient;$(DCC_UsePackage)</DCC_UsePackage>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
         <DCC_UsePackage>rtl;vcl;IndySystem;IndyCore;Spring.Core;$(DCC_UsePackage)</DCC_UsePackage>
@@ -139,9 +139,10 @@
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="IndySystem.dcp"/>
         <DCCReference Include="IndyCore.dcp"/>
-        <DCCReference Include="vcl.dcp"/>
         <DCCReference Include="CiaComPortPackage.dcp"/>
         <DCCReference Include="Spring.Core.dcp"/>
+        <DCCReference Include="ZintPackage.dcp"/>
+        <DCCReference Include="TTgPuttyClient.dcp"/>
         <DCCReference Include="MPF.Arrays.pas"/>
         <DCCReference Include="MPF.Converters.pas"/>
         <DCCReference Include="MPF.Matrices.pas"/>
@@ -156,6 +157,12 @@
         <DCCReference Include="MPF.BoolMatrixRender.pas"/>
         <DCCReference Include="Components\MPF.AppInfo.pas"/>
         <DCCReference Include="Components\MPF.Persistent.pas"/>
+        <DCCReference Include="Components\MPF.Observers.pas"/>
+        <DCCReference Include="Barcodes\MPF.Barcode.pas"/>
+        <DCCReference Include="Barcodes\MPF.Barcode.EANx.pas"/>
+        <DCCReference Include="Barcodes\MPF.Barcode1D.pas"/>
+        <DCCReference Include="Components\MPF.CustomSFTPClient.pas"/>
+        <DCCReference Include="Components\MPF.SFTPClient.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -176,6 +183,7 @@
                 <Source>
                     <Source Name="MainSource">MPF_Win32.dpk</Source>
                 </Source>
+                <Excluded_Packages/>
             </Delphi.Personality>
             <Deployment Version="3">
                 <DeployFile LocalName="$(BDS)\Redist\osx32\libcgunwind.1.0.dylib" Class="DependencyModule">

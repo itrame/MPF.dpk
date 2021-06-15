@@ -32,9 +32,10 @@ requires
   rtl,
   IndySystem,
   IndyCore,
-  vcl,
   CiaComPortPackage,
-  Spring.Core;
+  Spring.Core,
+  ZintPackage,
+  TTgPuttyClient;
 
 contains
   MPF.Arrays in 'MPF.Arrays.pas',
@@ -50,6 +51,12 @@ contains
   MPF.Streams in 'MPF.Streams.pas',
   MPF.BoolMatrixRender in 'MPF.BoolMatrixRender.pas',
   MPF.AppInfo in 'Components\MPF.AppInfo.pas',
-  MPF.Persistent in 'Components\MPF.Persistent.pas';
+  MPF.Persistent in 'Components\MPF.Persistent.pas',
+  MPF.Observers in 'Components\MPF.Observers.pas',
+  MPF.Barcode in 'Barcodes\MPF.Barcode.pas',
+  MPF.Barcode.EANx in 'Barcodes\MPF.Barcode.EANx.pas',
+  MPF.Barcode1D in 'Barcodes\MPF.Barcode1D.pas',
+  MPF.CustomSFTPClient in 'Components\MPF.CustomSFTPClient.pas',
+  MPF.SFTPClient in 'Components\MPF.SFTPClient.pas';
 
 end.

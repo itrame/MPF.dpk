@@ -11,16 +11,16 @@
     <Transaction>1899-12-30 00:00:00.000.000,=IndyCore.dcp</Transaction>
     <Transaction>1899-12-30 00:00:00.000.484,=D:\Users\MarcinUSER\Documents\Embarcadero\Studio\19.0\Components\MPF\MPF.Helpers.pas</Transaction>
     <Transaction>1899-12-30 00:00:00.000.266,=D:\Users\MarcinUSER\Documents\Embarcadero\Studio\19.0\Components\MPF\MPF.Arrays.pas</Transaction>
-    <Transaction>1899-12-30 00:00:00.000.051,=rtl.dcp</Transaction>
-    <Transaction>1899-12-30 00:00:00.000.909,=rtl.dcp</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.177,=rtl.dcp</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.546,=rtl.dcp</Transaction>
     <Transaction>1899-12-30 00:00:00.000.602,D:\Users\MarcinUSER\Documents\Embarcadero\Studio\Projects\Package1.dproj=D:\Users\MarcinUSER\Documents\Embarcadero\Studio\19.0\Components\MPF\MPF_Android.dproj</Transaction>
     <Transaction>1899-12-30 00:00:00.000.528,=D:\Users\MarcinUSER\Documents\Embarcadero\Studio\19.0\Components\MPF\MPF.Types.pas</Transaction>
     <Transaction>1899-12-30 00:00:00.000.705,=D:\Users\MarcinUSER\Documents\Embarcadero\Studio\19.0\Components\MPF\MPF.Converters.pas</Transaction>
-    <Transaction>1899-12-30 00:00:00.000.546,=rtl.dcp</Transaction>
-    <Transaction>1899-12-30 00:00:00.000.130,=Spring.Core.dcp</Transaction>
-    <Transaction>1899-12-30 00:00:00.000.177,=rtl.dcp</Transaction>
-    <Transaction>1899-12-30 00:00:00.000.916,=rtl.dcp</Transaction>
     <Transaction>1899-12-30 00:00:00.000.739,=rtl.dcp</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.130,=Spring.Core.dcp</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.909,=rtl.dcp</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.916,=rtl.dcp</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.051,=rtl.dcp</Transaction>
   </Transactions>
 	<ActiveMobileDevice>
 		<NoProfile Android=""/>

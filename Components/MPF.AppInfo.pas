@@ -1,5 +1,5 @@
 unit MPF.AppInfo;
-interface uses Classes, MPF.Persistent;
+interface uses Classes, MPF.Persistent, MPF.Observers;
 
 //==============================================================================
 type
@@ -46,8 +46,9 @@ type
   end;
 
 
-  TmpfAppInfo = class(TComponent)
+  TMpfAppInfo = class(TComponent, IMpfObservable)
   private
+    FObservers: IMpfObservers;
     FAppName: string;
     FVersion: TAppVersion;
     FSeparator: string;
@@ -63,6 +64,8 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    procedure UnregisterObserver(AObserver: IMpfObserver);
+    procedure RegisterObserver(AObserver: IMpfObserver);
     property FileName: string read GetFileName;
     property Directory: string read GetDirectory;
     property FileVersion: TAppVersion read GetFileVersion;
@@ -177,68 +180,82 @@ end;
 //==============================================================================
 { TmpfAppInfo }
 
-constructor TmpfAppInfo.Create(AOwner: TComponent);
+constructor TMpfAppInfo.Create(AOwner: TComponent);
 begin
   inherited;
+  FObservers := NewMpfObservers;
   FVersion := TAppVersion.Create(Self);
   FFileVersion := TAppVersion.Create(Self);
   FSeparator := ' v';
 end;
 
 
-destructor TmpfAppInfo.Destroy;
+destructor TMpfAppInfo.Destroy;
 begin
+  FObservers.NotifyFree;
   FFileVersion.Free;
   FVersion.Free;
   inherited;
 end;
 
 
-function TmpfAppInfo.GetAppNameFileVer: string;
+function TMpfAppInfo.GetAppNameFileVer: string;
 begin
   Result := AppName + Separator + FileVersion.Text;
 end;
 
 
-function TmpfAppInfo.GetAppNameVer: string;
+function TMpfAppInfo.GetAppNameVer: string;
 begin
   Result := AppName + Separator + Version.Text;
 end;
 
 
-function TmpfAppInfo.GetDirectory: string;
+function TMpfAppInfo.GetDirectory: string;
 begin
   Result := ExtractFileDir(FileName);
 end;
 
 
-function TmpfAppInfo.GetFileName: string;
+function TMpfAppInfo.GetFileName: string;
 begin
   Result := ParamStr(0);
 end;
 
 
-function TmpfAppInfo.GetFileVersion: TAppVersion;
+function TMpfAppInfo.GetFileVersion: TAppVersion;
 begin
   UpdateFileVersion;
   Result := FFileVersion;
 end;
 
 
-procedure TmpfAppInfo.SetAppName(const Value: string);
+procedure TMpfAppInfo.RegisterObserver(AObserver: IMpfObserver);
+begin
+  FObservers.RegisterObserver(AObserver);
+end;
+
+
+procedure TMpfAppInfo.SetAppName(const Value: string);
 begin
   if (csDesigning in ComponentState) or (csReading in ComponentState) then
     FAppName := Value;
 end;
 
 
-procedure TmpfAppInfo.SetVersion(AVersion: TAppVersion);
+procedure TMpfAppInfo.SetVersion(AVersion: TAppVersion);
 begin
   FVersion.Assign(AVersion);
 end;
 
 
-procedure TmpfAppInfo.UpdateFileVersion;
+procedure TMpfAppInfo.UnregisterObserver(AObserver: IMpfObserver);
+begin
+  FObservers.UnregisterObserver(AObserver);
+end;
+
+
+procedure TMpfAppInfo.UpdateFileVersion;
 var
   AVerInfoSize, AVerValueSize, ADummy: UInt32;
   AVerInfo: Pointer;
@@ -277,7 +294,7 @@ end;
 
 procedure Register;
 begin
-  RegisterComponents('MPF', [TmpfAppInfo]);
+  RegisterComponents('MPF', [TMpfAppInfo]);
 end;
 
 end.

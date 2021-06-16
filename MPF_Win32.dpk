@@ -57,6 +57,7 @@ contains
   MPF.Barcode.EANx in 'Barcodes\MPF.Barcode.EANx.pas',
   MPF.Barcode1D in 'Barcodes\MPF.Barcode1D.pas',
   MPF.CustomSFTPClient in 'Components\MPF.CustomSFTPClient.pas',
-  MPF.SFTPClient in 'Components\MPF.SFTPClient.pas';
+  MPF.SFTPClient in 'Components\MPF.SFTPClient.pas',
+  MPF.DevStatus in 'MPF.DevStatus.pas';
 
 end.

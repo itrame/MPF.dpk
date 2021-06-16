@@ -163,6 +163,7 @@
         <DCCReference Include="Barcodes\MPF.Barcode1D.pas"/>
         <DCCReference Include="Components\MPF.CustomSFTPClient.pas"/>
         <DCCReference Include="Components\MPF.SFTPClient.pas"/>
+        <DCCReference Include="MPF.DevStatus.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

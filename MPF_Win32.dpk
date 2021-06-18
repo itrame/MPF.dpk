@@ -58,6 +58,7 @@ contains
   MPF.Barcode1D in 'Barcodes\MPF.Barcode1D.pas',
   MPF.CustomSFTPClient in 'Components\MPF.CustomSFTPClient.pas',
   MPF.SFTPClient in 'Components\MPF.SFTPClient.pas',
-  MPF.DevStatus in 'MPF.DevStatus.pas';
+  MPF.DevStatus in 'MPF.DevStatus.pas',
+  MPF.Queue in 'MPF.Queue.pas';
 
 end.

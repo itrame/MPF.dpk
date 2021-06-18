@@ -1,5 +1,5 @@
 unit MPF.Helpers;
-interface uses SysUtils, MPF.Types, Vcl.StdCtrls;
+interface uses SysUtils, MPF.Types, Vcl.StdCtrls, Vcl.ComCtrls;
 
 //==============================================================================
 type
@@ -63,10 +63,20 @@ type
   end;
 
 //------------------------------------------------------------------------------
+  TDateTimeHelper = record helper for TDateTime
+    function ToStr: string;
+  end;
+
+//------------------------------------------------------------------------------
+  TListColumnsHelper = class helper for TListColumns
+    function GetColumn(const ACaption: string): TListColumn;
+  end;
+
+//------------------------------------------------------------------------------
 function ToTimeStr(const AHour, AMin: Byte): string;
 
 //==============================================================================
-implementation uses Character;
+implementation uses Character, Classes;
 
 //==============================================================================
 { TByteHelper }
@@ -361,5 +371,29 @@ begin
     if i < (Length(Self)-1) then Result := Result + ASep;
   end;
 end;
+
+//==============================================================================
+{ TDateTimeHelper }
+
+function TDateTimeHelper.ToStr: string;
+begin
+  Result := DateTimeToStr(Self);
+end;
+
+//==============================================================================
+{ TListColumnsHelper }
+
+function TListColumnsHelper.GetColumn(const ACaption: string): TListColumn;
+var
+  i: Integer;
+begin
+  Result := nil;
+  for i:=0 to Self.Count-1 do
+    if Self[i].Caption = ACaption then begin
+      Result := Self[i];
+      Break;
+    end;
+end;
+
 
 end.

@@ -141,7 +141,7 @@ begin
     raise Exception.Create('Invalid MaxCount value: ' + AValue.ToString);
 
   MaxCount := AValue;
-  while Items.Count > MaxCount do Items.Dequeue;
+  if MaxCount >= 0 then while Items.Count > MaxCount do Items.Dequeue;
 
 end;
 

@@ -1,94 +1,146 @@
 unit MPF.Version;
-interface uses Classes;
+interface
 
 //==============================================================================
-//type
+type
+  IMpfEditableVersion = interface;
 
+  IMpfVersion = interface['{95DF0014-3F79-4A37-A8F2-AB985A427682}']
+    function GetMajor: UInt32;
+    function GetMinor: UInt32;
+    function GetRelease: UInt32;
+    function GetBuild: UInt32;
+    function ToStr: string;
+    procedure CopyTo(ADest: IMpfEditableVersion);
+
+    property Major: UInt32 read GetMajor;
+    property Minor: UInt32 read GetMinor;
+    property Release: UInt32 read GetRelease;
+    property Build: UInt32 read GetBuild;
+
+  end;
 
 //------------------------------------------------------------------------------
-//  IFileVersionReader = interface['{35B1DA93-230A-471C-8B4B-455779D42018}']
-//    function GetVersion(const AFileName: string): IVersion;
-//  end;
+  IMpfEditableVersion = interface(IMpfVersion)['{605D1E78-0977-4E0E-837A-19FD99F3674F}']
+    procedure SetMajor(const AValue: UInt32);
+    procedure SetMinor(const AValue: UInt32);
+    procedure SetRelease(const AValue: UInt32);
+    procedure SetBuild(const AValue: UInt32);
 
-//==============================================================================
-//function NewFileVersionReader: IFileVersionReader;
-//function NewAppVersion(AVersion: IVersion; const ACompile: TCompile): IAppVersion;
-
-//==============================================================================
-implementation uses Windows, SysUtils;
-
-//==============================================================================
-//type
-
-
-
+    property Major: UInt32 read GetMajor write SetMajor;
+    property Minor: UInt32 read GetMinor write SetMinor;
+    property Release: UInt32 read GetRelease write SetRelease;
+    property Build: UInt32 read GetBuild write SetBuild;
+  end;
 
 //------------------------------------------------------------------------------
-//  TFileVersionReader = class(TInterfacedObject, IFileVersionReader)
-//  strict private
-//    function GetVersion(const AFileName: string): IVersion;
-//  end;
+  TMpfVersion = class(TInterfacedObject, IMpfVersion, IMpfEditableVersion)
+  strict protected
+    Major, Minor, Release, Build: UInt32;
+    function GetMajor: UInt32;
+    function GetMinor: UInt32;
+    function GetRelease: UInt32;
+    function GetBuild: UInt32;
+    procedure SetMajor(const AValue: UInt32);
+    procedure SetMinor(const AValue: UInt32);
+    procedure SetRelease(const AValue: UInt32);
+    procedure SetBuild(const AValue: UInt32);
+    function ToStr: string; virtual;
+    procedure CopyTo(ADest: IMpfEditableVersion); virtual;
+  public
+    constructor Create(const AMajor, AMinor, ARelease, ABuild: UInt32);
+  end;
 
 //==============================================================================
-{ TMpFileVersionReader }
-
-//function TFileVersionReader.GetVersion(const AFileName: string): IVersion;
-//var
-//  AVerInfoSize, AVerValueSize, ADummy: UInt32;
-//  AVerInfo: Pointer;
-//  AVerValue: PVSFixedFileInfo;
-//  AMajor, AMinor, ARelease, ABuild: UInt16;
-//
-//begin
-//  AVerInfoSize := GetFileVersionInfoSize(PChar(AFileName), ADummy);
-//  if AVerInfoSize < 1 then Exit;
-//
-//  GetMem(AVerInfo, AVerInfoSize);
-//  try
-//
-//    if GetFileVersionInfo(PChar(AFileName), 0, AVerInfoSize, AVerInfo) then
-//    begin
-//      VerQueryValue(AVerInfo, '\', Pointer(AVerValue), AVerValueSize);
-//      with AVerValue^ do
-//      begin
-//        AMajor := dwFileVersionMS shr 16;
-//        AMinor := dwFileVersionMS and $FFFF;
-//        ARelease := dwFileVersionLS shr 16;
-//        ABuild := dwFileVersionLS and $FFFF;
-//      end;
-//
-//      Result := NewVersion(AMajor, AMinor, ARelease, ABuild);
-//
-//    end;
-//
-//  finally
-//    FreeMem(AVerInfo, AVerInfoSize);
-//  end;
-//
-//end;
-
-
-
-
+implementation uses Spring.Container, SysUtils;
 
 //==============================================================================
-//function NewFileVersionReader: IFileVersionReader;
-//begin
-//  Result := TFileVersionReader.Create;
-//end;
-//
-////------------------------------------------------------------------------------
-//function NewVersion(const AMajor, AMinor, ARelease, ABuild: UInt16): IVersion;
-//begin
-//  Result := TVersion.Create(AMajor, AMinor, ARelease, ABuild);
-//end;
-//
-////------------------------------------------------------------------------------
-//function NewAppVersion(AVersion: IVersion; const ACompile: TCompile): IAppVersion;
-//begin
-//  Result := TAppVersion.Create(AVersion, ACompile);
-//end;
+{ TMpfVersion }
+
+procedure TMpfVersion.CopyTo(ADest: IMpfEditableVersion);
+var
+  ADestObject: TObject;
+  ADestVersion: TMpfVersion;
+begin
+  ADestObject := ADest as TObject;
+  if ADestObject is TMpfVersion then begin
+    ADestVersion := ADestObject as TMpfVersion;
+    ADestVersion.Major := Major;
+    ADestVersion.Minor := Minor;
+    ADestVersion.Release := Release;
+    ADestVersion.Build := Build;
+  end;
+end;
+
+//------------------------------------------------------------------------------
+constructor TMpfVersion.Create(const AMajor, AMinor, ARelease, ABuild: UInt32);
+begin
+  inherited Create;
+  Major := AMajor;
+  Minor := AMinor;
+  Release := ARelease;
+  Build := ABuild;
+end;
+
+//------------------------------------------------------------------------------
+function TMpfVersion.GetBuild: UInt32;
+begin
+  Result := Build;
+end;
+
+//------------------------------------------------------------------------------
+function TMpfVersion.GetMajor: UInt32;
+begin
+  Result := Major;
+end;
+
+//------------------------------------------------------------------------------
+function TMpfVersion.GetMinor: UInt32;
+begin
+  Result := Minor;
+end;
+
+//------------------------------------------------------------------------------
+function TMpfVersion.GetRelease: UInt32;
+begin
+  Result := Release;
+end;
+
+//------------------------------------------------------------------------------
+procedure TMpfVersion.SetBuild(const AValue: UInt32);
+begin
+  Build := AValue;
+end;
+
+//------------------------------------------------------------------------------
+procedure TMpfVersion.SetMajor(const AValue: UInt32);
+begin
+  Major := AValue;
+end;
+
+//------------------------------------------------------------------------------
+procedure TMpfVersion.SetMinor(const AValue: UInt32);
+begin
+  Minor := AValue;
+end;
+
+//------------------------------------------------------------------------------
+procedure TMpfVersion.SetRelease(const AValue: UInt32);
+begin
+  Release := AValue;
+end;
+
+//------------------------------------------------------------------------------
+function TMpfVersion.ToStr: string;
+begin
+  Result := Major.ToString + '.' + Minor.ToString + '.' + Release.ToString + '.'
+    + Build.ToString;
+end;
+
+//==============================================================================
+initialization
+  GlobalContainer.RegisterType<TMpfVersion>.
+    Implements<IMpfVersion>.
+    Implements<IMpfEditableVersion>;
 
 end.
-
-

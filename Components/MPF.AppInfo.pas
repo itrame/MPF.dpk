@@ -3,7 +3,12 @@ interface uses Classes, MPF.Persistent, MPF.Observers;
 
 //==============================================================================
 type
-  TCompile = (cAlpha, cBeta, cRelease);
+  TMpfCompile = (cAlpha, cBeta, cRelease);
+
+
+  IMpfVersion = interface['{A3170CE5-76DB-49BA-818C-C4C1AFDABC8B}']
+
+  end;
 
 
   TVersion = class(TmpfPersistent)
@@ -33,16 +38,16 @@ type
 
   TAppVersion = class(TVersion)
   strict private
-    procedure SetCompile(const AValue: TCompile);
+    procedure SetCompile(const AValue: TMpfCompile);
   private
-    FCompile: TCompile;
+    FCompile: TMpfCompile;
   strict protected
     procedure AssignTo(ADest: TPersistent); override;
     function AsString: string; override;
   public
     constructor Create(AOwner: TPersistent); overload;
   published
-    property Compile: TCompile read FCompile write SetCompile;
+    property Compile: TMpfCompile read FCompile write SetCompile;
   end;
 
 
@@ -78,7 +83,7 @@ type
   end;
 
 //==============================================================================
-procedure Register;
+//procedure Register;
 
 //==============================================================================
 implementation uses SysUtils, Windows;
@@ -172,7 +177,7 @@ begin
 end;
 
 
-procedure TAppVersion.SetCompile(const AValue: TCompile);
+procedure TAppVersion.SetCompile(const AValue: TMpfCompile);
 begin
   SetDesignParam(FCompile, AValue);
 end;
@@ -292,9 +297,9 @@ end;
 
 //==============================================================================
 
-procedure Register;
-begin
-  RegisterComponents('MPF', [TMpfAppInfo]);
-end;
+//procedure Register;
+//begin
+//  RegisterComponents('MPF', [TMpfAppInfo]);
+//end;
 
 end.

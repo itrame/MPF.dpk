@@ -52,6 +52,7 @@ type
 //------------------------------------------------------------------------------
   TBoolHelper = record helper for Boolean
     function ToString(const ATrueStr, AFalseStr: string): string;
+    function ToStr(const ATrueStr, AFalseStr: string): string;
   end;
 
 //------------------------------------------------------------------------------
@@ -312,6 +313,12 @@ end;
 //==============================================================================
 { TBoolHelper }
 
+function TBoolHelper.ToStr(const ATrueStr, AFalseStr: string): string;
+begin
+  Result := ToString(ATrueStr, AFalseStr);
+end;
+
+//------------------------------------------------------------------------------
 function TBoolHelper.ToString(const ATrueStr, AFalseStr: string): string;
 begin
   if Self then Result := ATrueStr else Result := AFalseStr;

@@ -26,6 +26,10 @@ type
     function ToHex(const APrefix, ASuffix, ASeparator: string): string; overload;
     function ToHex: string; overload;
     function ToAnsiStr(const ATerminator: Byte = $00): string;
+    function GetSize: UInt32;
+    procedure SetSize(const ASize: UInt32);
+
+    property Size: UInt32 read GetSize write SetSize;
   end;
 
 //------------------------------------------------------------------------------
@@ -159,6 +163,12 @@ begin
 end;
 
 //------------------------------------------------------------------------------
+function TBytesHelper.GetSize: UInt32;
+begin
+  Result := Length(Self);
+end;
+
+//------------------------------------------------------------------------------
 function TBytesHelper.GetUInt32(const APos: Integer): UInt32;
 begin
   Result := (Self[APos] shl 8) or Self[APos+1];
@@ -182,6 +192,12 @@ end;
 function TBytesHelper.GetWord(const APos: Integer): Word;
 begin
   Result := (Self[APos] shl 8) or Self[APos+1];
+end;
+
+//------------------------------------------------------------------------------
+procedure TBytesHelper.SetSize(const ASize: UInt32);
+begin
+  SetLength(Self, ASize);
 end;
 
 //------------------------------------------------------------------------------

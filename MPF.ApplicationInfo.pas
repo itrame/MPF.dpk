@@ -5,10 +5,15 @@ interface uses MPF.ApplicationVersion;
 type
   IMpfApplicationInfo = interface['{67285492-009A-4321-8D68-A145FE5BDCED}']
     function GetVersion: IMpfApplicationVersion;
+    function GetAppName: string;
+    procedure SetAppName(const AAppName: string);
     procedure SetVersion(const AMajor, AMinor, ARelease, ABuild: UInt32; const ACompile: TMpfCompile = Release);
-    procedure SetVersionFromFile(const AFileName: string; const ACompile: TMpfCompile);
+    procedure SetVersionFromFile(const AFileName: string; const ACompile: TMpfCompile = Release);
     procedure SetVersionFromExe(const ACompile: TMpfCompile = Release);
+
     property Version: IMpfApplicationVersion read GetVersion;
+    property AppName: string read GetAppName write SetAppName;
+
   end;
 
 //==============================================================================
@@ -20,10 +25,13 @@ type
   TMpfApplicationInfo = class(TInterfacedObject, IMpfApplicationInfo)
   strict private
     Version: IMpfEditableApplicationVersion;
+    AppName: string;
     function GetVersion: IMpfApplicationVersion;
     procedure SetVersion(const AMajor, AMinor, ARelease, ABuild: UInt32; const ACompile: TMpfCompile = Release);
-    procedure SetVersionFromFile(const AFileName: string; const ACompile: TMpfCompile);
+    procedure SetVersionFromFile(const AFileName: string; const ACompile: TMpfCompile = Release);
     procedure SetVersionFromExe(const ACompile: TMpfCompile = Release);
+    function GetAppName: string;
+    procedure SetAppName(const AAppName: string);
   public
     constructor Create;
   end;
@@ -39,9 +47,21 @@ begin
 end;
 
 //------------------------------------------------------------------------------
+function TMpfApplicationInfo.GetAppName: string;
+begin
+  Result := AppName;
+end;
+
+//------------------------------------------------------------------------------
 function TMpfApplicationInfo.GetVersion: IMpfApplicationVersion;
 begin
   if not Supports(Version, IMpfApplicationVersion, Result) then Result := nil;
+end;
+
+//------------------------------------------------------------------------------
+procedure TMpfApplicationInfo.SetAppName(const AAppName: string);
+begin
+  AppName := AAppName;
 end;
 
 //------------------------------------------------------------------------------

@@ -45,6 +45,7 @@ type
     function ToInteger: Integer;
     function IsOnlyDigits: Boolean;
     function ToBytes: TBytes;
+    function HexToInt: Integer;
   end;
 
 //------------------------------------------------------------------------------
@@ -252,6 +253,12 @@ begin
     if Result[1] = AChar then Delete(Result, 1, 1) else Break;
 end;
 
+function TStringHelper.HexToInt: Integer;
+begin
+  Result := StrToInt('$' + Self);
+end;
+
+//------------------------------------------------------------------------------
 function TStringHelper.IsOnlyDigits: Boolean;
 var
   i: Integer;

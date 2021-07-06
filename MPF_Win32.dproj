@@ -168,6 +168,7 @@
         <DCCReference Include="MPF.Version.pas"/>
         <DCCReference Include="MPF.ApplicationVersion.pas"/>
         <DCCReference Include="MPF.ApplicationInfo.pas"/>
+        <DCCReference Include="MPF.XML.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

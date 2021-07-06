@@ -62,6 +62,7 @@ contains
   MPF.Queue in 'MPF.Queue.pas',
   MPF.Version in 'MPF.Version.pas',
   MPF.ApplicationVersion in 'MPF.ApplicationVersion.pas',
-  MPF.ApplicationInfo in 'MPF.ApplicationInfo.pas';
+  MPF.ApplicationInfo in 'MPF.ApplicationInfo.pas',
+  MPF.XML in 'MPF.XML.pas';
 
 end.

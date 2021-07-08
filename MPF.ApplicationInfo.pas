@@ -10,9 +10,14 @@ type
     procedure SetVersion(const AMajor, AMinor, ARelease, ABuild: UInt32; const ACompile: TMpfCompile = Release);
     procedure SetVersionFromFile(const AFileName: string; const ACompile: TMpfCompile = Release);
     procedure SetVersionFromExe(const ACompile: TMpfCompile = Release);
+    function GetAppNameVer: string;
+    function GetAppNameVerSep: string;
+    procedure SetAppNameVerSep(const ASep: string);
 
     property Version: IMpfApplicationVersion read GetVersion;
     property AppName: string read GetAppName write SetAppName;
+    property AppNameVer: string read GetAppNameVer;
+    property AppNameVerSep: string read GetAppNameVerSep write SetAppNameVerSep;
 
   end;
 
@@ -26,12 +31,16 @@ type
   strict private
     Version: IMpfEditableApplicationVersion;
     AppName: string;
+    AppNameVerSep: string;
     function GetVersion: IMpfApplicationVersion;
     procedure SetVersion(const AMajor, AMinor, ARelease, ABuild: UInt32; const ACompile: TMpfCompile = Release);
     procedure SetVersionFromFile(const AFileName: string; const ACompile: TMpfCompile = Release);
     procedure SetVersionFromExe(const ACompile: TMpfCompile = Release);
     function GetAppName: string;
     procedure SetAppName(const AAppName: string);
+    function GetAppNameVer: string;
+    function GetAppNameVerSep: string;
+    procedure SetAppNameVerSep(const ASep: string);
   public
     constructor Create;
   end;
@@ -44,12 +53,25 @@ constructor TMpfApplicationInfo.Create;
 begin
   inherited;
   Version := ServiceLocator.GetService<IMpfEditableApplicationVersion>;
+  AppNameVerSep := ' ';
 end;
 
 //------------------------------------------------------------------------------
 function TMpfApplicationInfo.GetAppName: string;
 begin
   Result := AppName;
+end;
+
+//------------------------------------------------------------------------------
+function TMpfApplicationInfo.GetAppNameVer: string;
+begin
+  Result := AppName + ' ' + Version.ToStr;
+end;
+
+//------------------------------------------------------------------------------
+function TMpfApplicationInfo.GetAppNameVerSep: string;
+begin
+  Result := AppNameVerSep;
 end;
 
 //------------------------------------------------------------------------------
@@ -62,6 +84,12 @@ end;
 procedure TMpfApplicationInfo.SetAppName(const AAppName: string);
 begin
   AppName := AAppName;
+end;
+
+//------------------------------------------------------------------------------
+procedure TMpfApplicationInfo.SetAppNameVerSep(const ASep: string);
+begin
+  AppNameVerSep := ASep;
 end;
 
 //------------------------------------------------------------------------------

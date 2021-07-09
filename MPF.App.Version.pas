@@ -1,4 +1,4 @@
-unit MPF.ApplicationVersion;
+unit MPF.App.Version;
 interface uses MPF.Version;
 
 //==============================================================================

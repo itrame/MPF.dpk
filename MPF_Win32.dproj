@@ -155,7 +155,7 @@
         <DCCReference Include="Components\MPF.MultiStateLamp.pas"/>
         <DCCReference Include="MPF.Streams.pas"/>
         <DCCReference Include="MPF.BoolMatrixRender.pas"/>
-        <DCCReference Include="Components\MPF.AppInfo.pas"/>
+        <DCCReference Include="Components\_MPF.AppInfo.pas"/>
         <DCCReference Include="Components\MPF.Persistent.pas"/>
         <DCCReference Include="Components\MPF.Observers.pas"/>
         <DCCReference Include="Barcodes\MPF.Barcode.pas"/>
@@ -166,8 +166,8 @@
         <DCCReference Include="MPF.DevStatus.pas"/>
         <DCCReference Include="MPF.Queue.pas"/>
         <DCCReference Include="MPF.Version.pas"/>
-        <DCCReference Include="MPF.ApplicationVersion.pas"/>
-        <DCCReference Include="MPF.ApplicationInfo.pas"/>
+        <DCCReference Include="MPF.App.Version.pas"/>
+        <DCCReference Include="MPF.App.Info.pas"/>
         <DCCReference Include="MPF.XML.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

@@ -50,7 +50,7 @@ contains
   MPF.MultiStateLamp in 'Components\MPF.MultiStateLamp.pas',
   MPF.Streams in 'MPF.Streams.pas',
   MPF.BoolMatrixRender in 'MPF.BoolMatrixRender.pas',
-  MPF.AppInfo in 'Components\MPF.AppInfo.pas',
+  _MPF.AppInfo in 'Components\_MPF.AppInfo.pas',
   MPF.Persistent in 'Components\MPF.Persistent.pas',
   MPF.Observers in 'Components\MPF.Observers.pas',
   MPF.Barcode in 'Barcodes\MPF.Barcode.pas',
@@ -61,8 +61,8 @@ contains
   MPF.DevStatus in 'MPF.DevStatus.pas',
   MPF.Queue in 'MPF.Queue.pas',
   MPF.Version in 'MPF.Version.pas',
-  MPF.ApplicationVersion in 'MPF.ApplicationVersion.pas',
-  MPF.ApplicationInfo in 'MPF.ApplicationInfo.pas',
+  MPF.App.Version in 'MPF.App.Version.pas',
+  MPF.App.Info in 'MPF.App.Info.pas',
   MPF.XML in 'MPF.XML.pas';
 
 end.

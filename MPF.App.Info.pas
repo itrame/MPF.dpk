@@ -1,9 +1,9 @@
-unit MPF.ApplicationInfo;
-interface uses MPF.ApplicationVersion;
+unit MPF.App.Info;
+interface uses MPF.App.Version;
 
 //==============================================================================
 type
-  IMpfApplicationInfo = interface['{67285492-009A-4321-8D68-A145FE5BDCED}']
+  IMpfAppInfo = interface['{67285492-009A-4321-8D68-A145FE5BDCED}']
     function GetVersion: IMpfApplicationVersion;
     function GetAppName: string;
     procedure SetAppName(const AAppName: string);
@@ -13,11 +13,13 @@ type
     function GetAppNameVer: string;
     function GetAppNameVerSep: string;
     procedure SetAppNameVerSep(const ASep: string);
+    function GetExeDir: string;
 
     property Version: IMpfApplicationVersion read GetVersion;
     property AppName: string read GetAppName write SetAppName;
     property AppNameVer: string read GetAppNameVer;
     property AppNameVerSep: string read GetAppNameVerSep write SetAppNameVerSep;
+    property ExeDir: string read GetExeDir;
 
   end;
 
@@ -27,7 +29,7 @@ implementation uses SysUtils, Spring.Container, Spring.Services,
 
 //==============================================================================
 type
-  TMpfApplicationInfo = class(TInterfacedObject, IMpfApplicationInfo)
+  TMpfAppInfo = class(TInterfacedObject, IMpfAppInfo)
   strict private
     Version: IMpfEditableApplicationVersion;
     AppName: string;
@@ -41,15 +43,16 @@ type
     function GetAppNameVer: string;
     function GetAppNameVerSep: string;
     procedure SetAppNameVerSep(const ASep: string);
+    function GetExeDir: string;
   public
     constructor Create;
   end;
 
 
 //==============================================================================
-{ TMpfApplicationInfo }
+{ TMpfAppInfo }
 
-constructor TMpfApplicationInfo.Create;
+constructor TMpfAppInfo.Create;
 begin
   inherited;
   Version := ServiceLocator.GetService<IMpfEditableApplicationVersion>;
@@ -57,43 +60,49 @@ begin
 end;
 
 //------------------------------------------------------------------------------
-function TMpfApplicationInfo.GetAppName: string;
+function TMpfAppInfo.GetAppName: string;
 begin
   Result := AppName;
 end;
 
 //------------------------------------------------------------------------------
-function TMpfApplicationInfo.GetAppNameVer: string;
+function TMpfAppInfo.GetAppNameVer: string;
 begin
   Result := AppName + ' ' + Version.ToStr;
 end;
 
 //------------------------------------------------------------------------------
-function TMpfApplicationInfo.GetAppNameVerSep: string;
+function TMpfAppInfo.GetAppNameVerSep: string;
 begin
   Result := AppNameVerSep;
 end;
 
 //------------------------------------------------------------------------------
-function TMpfApplicationInfo.GetVersion: IMpfApplicationVersion;
+function TMpfAppInfo.GetExeDir: string;
+begin
+  Result := ParamStr(0);
+end;
+
+//------------------------------------------------------------------------------
+function TMpfAppInfo.GetVersion: IMpfApplicationVersion;
 begin
   if not Supports(Version, IMpfApplicationVersion, Result) then Result := nil;
 end;
 
 //------------------------------------------------------------------------------
-procedure TMpfApplicationInfo.SetAppName(const AAppName: string);
+procedure TMpfAppInfo.SetAppName(const AAppName: string);
 begin
   AppName := AAppName;
 end;
 
 //------------------------------------------------------------------------------
-procedure TMpfApplicationInfo.SetAppNameVerSep(const ASep: string);
+procedure TMpfAppInfo.SetAppNameVerSep(const ASep: string);
 begin
   AppNameVerSep := ASep;
 end;
 
 //------------------------------------------------------------------------------
-procedure TMpfApplicationInfo.SetVersion(const AMajor, AMinor, ARelease,
+procedure TMpfAppInfo.SetVersion(const AMajor, AMinor, ARelease,
   ABuild: UInt32; const ACompile: TMpfCompile);
 begin
   Version.Major := AMajor;
@@ -104,13 +113,13 @@ begin
 end;
 
 //------------------------------------------------------------------------------
-procedure TMpfApplicationInfo.SetVersionFromExe(const ACompile: TMpfCompile);
+procedure TMpfAppInfo.SetVersionFromExe(const ACompile: TMpfCompile);
 begin
   SetVersionFromFile(ParamStr(0), ACompile);
 end;
 
 //------------------------------------------------------------------------------
-procedure TMpfApplicationInfo.SetVersionFromFile(const AFileName: string;
+procedure TMpfAppInfo.SetVersionFromFile(const AFileName: string;
   const ACompile: TMpfCompile);
 var
   AReader: IMpfFileVersionReader;
@@ -124,7 +133,7 @@ end;
 
 //==============================================================================
 initialization
-  GlobalContainer.RegisterType<TMpfApplicationInfo>.
-    Implements<IMpfApplicationInfo>;
+  GlobalContainer.RegisterType<TMpfAppInfo>.
+    Implements<IMpfAppInfo>;
 
 end.

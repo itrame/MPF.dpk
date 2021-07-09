@@ -1,4 +1,4 @@
-unit MPF.AppInfo;
+unit _MPF.AppInfo;
 interface uses Classes, MPF.Persistent, MPF.Observers;
 
 //==============================================================================

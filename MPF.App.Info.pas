@@ -14,12 +14,16 @@ type
     function GetAppNameVerSep: string;
     procedure SetAppNameVerSep(const ASep: string);
     function GetExeDir: string;
+    function GetExePath: string;
+    function GetExeName: string;
 
     property Version: IMpfApplicationVersion read GetVersion;
     property AppName: string read GetAppName write SetAppName;
     property AppNameVer: string read GetAppNameVer;
     property AppNameVerSep: string read GetAppNameVerSep write SetAppNameVerSep;
     property ExeDir: string read GetExeDir;
+    property ExePath: string read GetExePath;
+    property ExeName: string read GetExeName;
 
   end;
 
@@ -44,6 +48,8 @@ type
     function GetAppNameVerSep: string;
     procedure SetAppNameVerSep(const ASep: string);
     function GetExeDir: string;
+    function GetExePath: string;
+    function GetExeName: string;
   public
     constructor Create;
   end;
@@ -79,6 +85,18 @@ end;
 
 //------------------------------------------------------------------------------
 function TMpfAppInfo.GetExeDir: string;
+begin
+  Result := ExtractFileDir(ParamStr(0));
+end;
+
+//------------------------------------------------------------------------------
+function TMpfAppInfo.GetExeName: string;
+begin
+  Result := ExtractFileName(ParamStr(0));
+end;
+
+//------------------------------------------------------------------------------
+function TMpfAppInfo.GetExePath: string;
 begin
   Result := ParamStr(0);
 end;

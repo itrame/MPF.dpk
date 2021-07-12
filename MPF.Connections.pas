@@ -205,7 +205,7 @@ function NewCOM(const APort: Byte; const ABaudrate: Integer;
 {$ENDIF}
 
 //==============================================================================
-implementation uses IdGlobal {$IFDEF MSWINDOWS}, Vcl.Forms {$ENDIF};
+implementation uses IdGlobal {$IFDEF MSWINDOWS}, Vcl.Forms {$ENDIF}, Spring.Container;
 
 //==============================================================================
 type
@@ -786,5 +786,9 @@ end;
 
 {$ENDIF}
 //==============================================================================
+initialization
+  GlobalContainer.RegisterType<TUdpConnection>.
+    Implements<IUdpConnection>;
+
 
 end.

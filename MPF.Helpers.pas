@@ -79,6 +79,11 @@ type
   end;
 
 //------------------------------------------------------------------------------
+  TListItemHelper = class helper for TListItem
+    procedure SetValue(const AColName, AValue: string);
+  end;
+
+//------------------------------------------------------------------------------
 function ToTimeStr(const AHour, AMin: Byte): string;
 
 //==============================================================================
@@ -425,5 +430,33 @@ begin
     end;
 end;
 
+//==============================================================================
+{ TListItemHelper }
+
+procedure TListItemHelper.SetValue(const AColName, AValue: string);
+var
+  i, AColId: Integer;
+  AListView: TListView;
+
+begin
+  if not Assigned(Self.Owner) then Exit;
+  if not (Self.Owner.Owner is TListView) then Exit;
+  AListView := Self.Owner.Owner as TListView;
+
+  AColId := -1;
+  for i:=0 to AListView.Columns.Count-1 do
+    if AListView.Columns[i].Caption = AColName then begin
+      AColId := i;
+      Break;
+    end;
+
+  if AColId < 0 then Exit;
+
+  for i:=SubItems.Count to AColId do
+    SubItems.Add('');
+
+  SubItems[AColId-1] := AValue;
+
+end;
 
 end.

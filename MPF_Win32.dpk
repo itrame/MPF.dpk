@@ -35,7 +35,8 @@ requires
   CiaComPortPackage,
   Spring.Core,
   ZintPackage,
-  TTgPuttyClient;
+  TTgPuttyClient,
+  vcl;
 
 contains
   MPF.Arrays in 'MPF.Arrays.pas',
@@ -63,6 +64,7 @@ contains
   MPF.Version in 'MPF.Version.pas',
   MPF.App.Version in 'MPF.App.Version.pas',
   MPF.App.Info in 'MPF.App.Info.pas',
-  MPF.XML in 'MPF.XML.pas';
+  MPF.XML in 'MPF.XML.pas',
+  MPF.BoldCheckBox in 'Components\MPF.BoldCheckBox.pas';
 
 end.

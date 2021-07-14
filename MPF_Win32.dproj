@@ -143,6 +143,7 @@
         <DCCReference Include="Spring.Core.dcp"/>
         <DCCReference Include="ZintPackage.dcp"/>
         <DCCReference Include="TTgPuttyClient.dcp"/>
+        <DCCReference Include="vcl.dcp"/>
         <DCCReference Include="MPF.Arrays.pas"/>
         <DCCReference Include="MPF.Converters.pas"/>
         <DCCReference Include="MPF.Matrices.pas"/>
@@ -169,6 +170,7 @@
         <DCCReference Include="MPF.App.Version.pas"/>
         <DCCReference Include="MPF.App.Info.pas"/>
         <DCCReference Include="MPF.XML.pas"/>
+        <DCCReference Include="Components\MPF.BoldCheckBox.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

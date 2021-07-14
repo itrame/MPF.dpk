@@ -8,11 +8,10 @@ implementation
 
 function TryGetAttribute(ANode: IXmlNode; const AAttr: string; ADefault: Variant): Variant;
 begin
-  try
-    Result := ANode.GetAttributeNS(AAttr,'');
-  except
+  if ANode.HasAttribute(AAttr) then
+    Result := ANode.GetAttributeNS(AAttr,'')
+  else
     Result := ADefault;
-  end;
 end;
 
 end.

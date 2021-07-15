@@ -65,6 +65,7 @@ contains
   MPF.App.Version in 'MPF.App.Version.pas',
   MPF.App.Info in 'MPF.App.Info.pas',
   MPF.XML in 'MPF.XML.pas',
-  MPF.BoldCheckBox in 'Components\MPF.BoldCheckBox.pas';
+  MPF.BoldCheckBox in 'Components\MPF.BoldCheckBox.pas',
+  MPF.Enumerator in 'MPF.Enumerator.pas';
 
 end.

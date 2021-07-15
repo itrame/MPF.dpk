@@ -20,9 +20,21 @@ type
     constructor Create(AItems: IList<T>);
   end;
 
+//------------------------------------------------------------------------------
+  TMpfQueueEnumerator<T> = class(TInterfacedObject, IMpfEnumerator<T>)
+  strict private
+    ID: Integer;
+    Items: IQueue<T>;
+    function GetCurrent: T;
+    function MoveNext: Boolean;
+  public
+    constructor Create(AItems: IQueue<T>);
+  end;
+
 //==============================================================================
   TMpfEnumerators = class
     class function NewListEnumerator<T>(AItems: IList<T>): IMpfEnumerator<T>;
+    class function NewQueueEnumerator<T>(AItems: IQueue<T>): IMpfEnumerator<T>;
   end;
 
 //==============================================================================
@@ -52,6 +64,30 @@ begin
 end;
 
 //==============================================================================
+{ TMpfQueueEnumerator }
+
+constructor TMpfQueueEnumerator<T>.Create(AItems: IQueue<T>);
+begin
+  inherited Create;
+  Items := AItems;
+  ID := -1;
+end;
+
+//------------------------------------------------------------------------------
+function TMpfQueueEnumerator<T>.GetCurrent: T;
+begin
+  Result := Items.ElementAt(ID);
+end;
+
+//------------------------------------------------------------------------------
+function TMpfQueueEnumerator<T>.MoveNext: Boolean;
+begin
+  Result := ID < (Items.Count-1);
+  if Result then Inc(ID);
+end;
+
+
+//==============================================================================
 { TMpfEnumerators }
 
 class function TMpfEnumerators.NewListEnumerator<T>(
@@ -60,6 +96,11 @@ begin
   Result := TMpfListEnumerator<T>.Create(AItems);
 end;
 
-//==============================================================================
+//------------------------------------------------------------------------------
+class function TMpfEnumerators.NewQueueEnumerator<T>(
+  AItems: IQueue<T>): IMpfEnumerator<T>;
+begin
+  Result := TMpfQueueEnumerator<T>.Create(AItems);
+end;
 
 end.

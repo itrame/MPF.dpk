@@ -66,6 +66,6 @@ contains
   MPF.App.Info in 'MPF.App.Info.pas',
   MPF.XML in 'MPF.XML.pas',
   MPF.BoldCheckBox in 'Components\MPF.BoldCheckBox.pas',
-  MPF.Enumerator in 'MPF.Enumerator.pas';
+  MPF.Enumerators in 'MPF.Enumerators.pas';
 
 end.

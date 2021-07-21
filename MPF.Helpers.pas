@@ -1,5 +1,5 @@
 unit MPF.Helpers;
-interface uses SysUtils, MPF.Types, Vcl.StdCtrls, Vcl.ComCtrls;
+interface uses SysUtils, MPF.Types, Vcl.StdCtrls, Vcl.ComCtrls, Spring.Collections;
 
 //==============================================================================
 type
@@ -81,6 +81,12 @@ type
 //------------------------------------------------------------------------------
   TListItemHelper = class helper for TListItem
     procedure SetValue(const AColName, AValue: string);
+  end;
+
+//------------------------------------------------------------------------------
+  TListViewHelper = class helper for TListView
+    function GetSelectedObjects: IList<TObject>;
+    function GetSelectedIndexes: IList<Integer>;
   end;
 
 //------------------------------------------------------------------------------
@@ -456,6 +462,40 @@ begin
     SubItems.Add('');
 
   SubItems[AColId-1] := AValue;
+
+end;
+
+//==============================================================================
+{ TListViewHelper }
+
+function TListViewHelper.GetSelectedIndexes: IList<Integer>;
+var
+  i: Integer;
+  AItem: TListItem;
+
+begin
+  Result := TCollections.CreateList<Integer>;
+  for i:=0 to Items.Count-1 do begin
+    AItem := Items[i];
+    if AItem.Selected then Result.Add(i);
+  end;
+
+end;
+
+//------------------------------------------------------------------------------
+function TListViewHelper.GetSelectedObjects: IList<TObject>;
+var
+  i: Integer;
+  AItem: TListItem;
+
+begin
+  Result := TCollections.CreateList<TObject>;
+  for i:=0 to Items.Count-1 do begin
+    AItem := Items[i];
+    if AItem.Selected then begin
+      if AItem.Data <> nil then Result.Add(AItem.Data);
+    end;
+  end;
 
 end;
 

@@ -87,6 +87,8 @@ type
   TListViewHelper = class helper for TListView
     function GetSelectedObjects: IList<TObject>;
     function GetSelectedIndexes: IList<Integer>;
+    function FirstSelected: Boolean;
+    function LastSelected: Boolean;
   end;
 
 //------------------------------------------------------------------------------
@@ -468,6 +470,14 @@ end;
 //==============================================================================
 { TListViewHelper }
 
+function TListViewHelper.FirstSelected: Boolean;
+begin
+  Result := false;
+  if Items.Count = 0 then Exit;
+  Result := Items[0].Selected;
+end;
+
+//------------------------------------------------------------------------------
 function TListViewHelper.GetSelectedIndexes: IList<Integer>;
 var
   i: Integer;
@@ -497,6 +507,14 @@ begin
     end;
   end;
 
+end;
+
+//------------------------------------------------------------------------------
+function TListViewHelper.LastSelected: Boolean;
+begin
+  Result := false;
+  if Items.Count = 0 then Exit;
+  Result := Items[Items.Count-1].Selected;
 end;
 
 end.

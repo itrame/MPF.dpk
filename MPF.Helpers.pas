@@ -87,15 +87,19 @@ type
   TListViewHelper = class helper for TListView
     function GetSelectedObjects: IList<TObject>;
     function GetSelectedIndexes: IList<Integer>;
-    function FirstSelected: Boolean;
-    function LastSelected: Boolean;
+    function IsFirstSelected: Boolean;
+    function IsLastSelected: Boolean;
+    function GetTopIndex: Integer;
+    procedure SetTopIndex(const AIndex: Integer);
+
+    property TopIndex: Integer read GetTopIndex write SetTopIndex;
   end;
 
 //------------------------------------------------------------------------------
 function ToTimeStr(const AHour, AMin: Byte): string;
 
 //==============================================================================
-implementation uses Character, Classes;
+implementation uses Character, Classes, System.Types;
 
 //==============================================================================
 { TByteHelper }
@@ -470,7 +474,7 @@ end;
 //==============================================================================
 { TListViewHelper }
 
-function TListViewHelper.FirstSelected: Boolean;
+function TListViewHelper.IsFirstSelected: Boolean;
 begin
   Result := false;
   if Items.Count = 0 then Exit;
@@ -510,11 +514,41 @@ begin
 end;
 
 //------------------------------------------------------------------------------
-function TListViewHelper.LastSelected: Boolean;
+function TListViewHelper.GetTopIndex: Integer;
+var
+  AItem: TListItem;
+begin
+  AItem := TopItem;
+  if Assigned(AItem) then Result := AItem.Index else Result := -1;
+end;
+
+//------------------------------------------------------------------------------
+function TListViewHelper.IsLastSelected: Boolean;
 begin
   Result := false;
   if Items.Count = 0 then Exit;
   Result := Items[Items.Count-1].Selected;
+end;
+
+//------------------------------------------------------------------------------
+procedure TListViewHelper.SetTopIndex(const AIndex: Integer);
+var
+  ABottomItem: TListItem;
+  ABottomIndex: Integer;
+
+begin
+  if AIndex < 0 then Exit;
+  if AIndex >= Items.Count then Exit;
+
+  ABottomIndex := AIndex + VisibleRowCount;
+
+  if ABottomIndex < Items.Count then
+    ABottomItem := Items[ABottomIndex-1]
+  else
+    ABottomItem := Items[Items.Count-1];
+
+  ABottomItem.MakeVisible(true);
+
 end;
 
 end.

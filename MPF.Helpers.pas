@@ -13,7 +13,10 @@ type
     function Hi: Byte;
     function BCDToInt: Integer;
     function ToBin(const AL, AH: string; const ASep: string = ''): string;
+    function IsAsciiDigit: Boolean;
+
     property Bit[Index: Byte]: Boolean read GetBit write SetBit;
+
   end;
 
 //------------------------------------------------------------------------------
@@ -123,6 +126,12 @@ end;
 function TByteHelper.Hi: Byte;
 begin
   Result := Self shr 4;
+end;
+
+//------------------------------------------------------------------------------
+function TByteHelper.IsAsciiDigit: Boolean;
+begin
+  Result := (Self >= $30) and (Self <= $39);
 end;
 
 //------------------------------------------------------------------------------

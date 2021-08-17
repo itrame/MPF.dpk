@@ -38,6 +38,7 @@ type
 //------------------------------------------------------------------------------
   TBoolArrayHelper = record helper for TBoolArray
     function ToStr(const ATrueStr, AFalseStr: string; const ASep: string = ''): string;
+    function Clone: TBoolArray;
   end;
 
 //------------------------------------------------------------------------------
@@ -416,6 +417,16 @@ end;
 //==============================================================================
 { TBoolArrayHelper }
 
+function TBoolArrayHelper.Clone: TBoolArray;
+var
+  i: Integer;
+begin
+  Result := [];
+  for i:=0 to Length(Self)-1 do
+    Result := Result + [Self[i]];
+end;
+
+//------------------------------------------------------------------------------
 function TBoolArrayHelper.ToStr(const ATrueStr, AFalseStr: string;
   const ASep: string = ''): string;
 var

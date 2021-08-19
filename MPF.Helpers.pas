@@ -1,5 +1,6 @@
 unit MPF.Helpers;
-interface uses SysUtils, MPF.Types, Vcl.StdCtrls, Vcl.ComCtrls, Spring.Collections;
+interface uses SysUtils, MPF.Types, Vcl.StdCtrls, Vcl.ComCtrls, Spring.Collections,
+  Classes;
 
 //==============================================================================
 type
@@ -53,6 +54,12 @@ type
   end;
 
 //------------------------------------------------------------------------------
+  TStringsHelper = class helper for TStrings
+    function AllEqual(const APattern: string): Boolean;
+    function GetFirstOther(const AText: string): string;
+  end;
+
+//------------------------------------------------------------------------------
   TUInt32Helper = record helper for UInt32
     function ToBytes: TBytes;
     function ToString: string;
@@ -103,7 +110,7 @@ type
 function ToTimeStr(const AHour, AMin: Byte): string;
 
 //==============================================================================
-implementation uses Character, Classes, System.Types;
+implementation uses Character, System.Types;
 
 //==============================================================================
 { TByteHelper }
@@ -568,6 +575,44 @@ begin
     ABottomItem := Items[Items.Count-1];
 
   ABottomItem.MakeVisible(true);
+
+end;
+
+//==============================================================================
+{ TStringsHelper }
+
+function TStringsHelper.AllEqual(const APattern: string): Boolean;
+var
+  i: Integer;
+
+begin
+  if Count < 1 then begin
+    Result := false;
+    Exit;
+  end;
+
+  Result := true;
+  for i:=0 to Count-1 do
+    if Self[i] <> APattern then begin
+      Result := false;
+      Break;
+    end;
+
+end;
+
+//------------------------------------------------------------------------------
+function TStringsHelper.GetFirstOther(const AText: string): string;
+var
+  i: Integer;
+
+begin
+  Result := '';
+
+  for i:=0 to Count-1 do
+    if Self[i] <> AText then begin
+      Result := Self[i];
+      Break;
+    end;
 
 end;
 

@@ -102,6 +102,8 @@ type
     function IsLastSelected: Boolean;
     function GetTopIndex: Integer;
     procedure SetTopIndex(const AIndex: Integer);
+    procedure SelectObject(AObject: TObject);
+    function ItemOfObject(AObject: TObject): TListItem;
 
     property TopIndex: Integer read GetTopIndex write SetTopIndex;
   end;
@@ -555,6 +557,38 @@ begin
   Result := false;
   if Items.Count = 0 then Exit;
   Result := Items[Items.Count-1].Selected;
+end;
+
+//------------------------------------------------------------------------------
+function TListViewHelper.ItemOfObject(AObject: TObject): TListItem;
+var
+  AItem: TListItem;
+  AItemObject: TObject;
+  i: Integer;
+
+begin
+  Result := nil;
+  for i:=0 to Items.Count-1 do begin
+    AItem := Items[i];
+    AItemObject := AItem.Data;
+    if AItemObject = AObject then begin
+      Result := AItem;
+      Break;
+    end;
+  end;
+
+end;
+
+//------------------------------------------------------------------------------
+procedure TListViewHelper.SelectObject(AObject: TObject);
+var
+  AItem: TListItem;
+begin
+  AItem := ItemOfObject(AObject);
+  if Assigned(AItem) then
+    ItemIndex := AItem.Index
+  else
+    ItemIndex := -1;
 end;
 
 //------------------------------------------------------------------------------

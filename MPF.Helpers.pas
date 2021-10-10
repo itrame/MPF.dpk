@@ -104,8 +104,12 @@ type
     procedure SetTopIndex(const AIndex: Integer);
     procedure SelectObject(AObject: TObject);
     function ItemOfObject(AObject: TObject): TListItem;
+    procedure SelectObjects(AObjects: IList<TObject>);
+    function GetSelectedObject: TObject;
 
     property TopIndex: Integer read GetTopIndex write SetTopIndex;
+    property SelectedObject: TObject read GetSelectedObject;
+
   end;
 
 //------------------------------------------------------------------------------
@@ -526,6 +530,12 @@ begin
 end;
 
 //------------------------------------------------------------------------------
+function TListViewHelper.GetSelectedObject: TObject;
+begin
+  if Assigned(Selected) then Result := Selected.Data else Result := nil;
+end;
+
+//------------------------------------------------------------------------------
 function TListViewHelper.GetSelectedObjects: IList<TObject>;
 var
   i: Integer;
@@ -589,6 +599,27 @@ begin
     ItemIndex := AItem.Index
   else
     ItemIndex := -1;
+end;
+
+//------------------------------------------------------------------------------
+procedure TListViewHelper.SelectObjects(AObjects: IList<TObject>);
+var
+  i: Integer;
+  AItemObject: TObject;
+
+begin
+  Items.BeginUpdate;
+  try
+
+    for i:=0 to Items.Count-1 do begin
+      AItemObject := Items[i].Data;
+      Items[i].Selected := AObjects.IndexOf(AItemObject) >= 0;
+    end;
+
+  finally
+    Items.EndUpdate;
+  end;
+
 end;
 
 //------------------------------------------------------------------------------

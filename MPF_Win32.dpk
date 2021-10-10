@@ -68,6 +68,7 @@ contains
   MPF.XML in 'MPF.XML.pas',
   MPF.BoldCheckBox in 'Components\MPF.BoldCheckBox.pas',
   MPF.Enumerators in 'MPF.Enumerators.pas',
-  MPF.IcpConET7060 in 'MPF.IcpConET7060.pas';
+  MPF.IcpConET7060 in 'MPF.IcpConET7060.pas',
+  MPF.TouchList in 'Components\MPF.TouchList.pas';
 
 end.

@@ -15,6 +15,7 @@ type
     function BCDToInt: Integer;
     function ToBin(const AL, AH: string; const ASep: string = ''): string;
     function IsAsciiDigit: Boolean;
+    function ToHex: string;
 
     property Bit[Index: Byte]: Boolean read GetBit write SetBit;
 
@@ -57,6 +58,7 @@ type
   TStringsHelper = class helper for TStrings
     function AllEqual(const APattern: string): Boolean;
     function GetFirstOther(const AText: string): string;
+    procedure FromList(AList: IList<string>);
   end;
 
 //------------------------------------------------------------------------------
@@ -104,12 +106,20 @@ type
     procedure SetTopIndex(const AIndex: Integer);
     procedure SelectObject(AObject: TObject);
     function ItemOfObject(AObject: TObject): TListItem;
-    procedure SelectObjects(AObjects: IList<TObject>);
+    procedure SetSelectedObjects(AObjects: IList<TObject>);
     function GetSelectedObject: TObject;
 
     property TopIndex: Integer read GetTopIndex write SetTopIndex;
     property SelectedObject: TObject read GetSelectedObject;
 
+  end;
+
+//------------------------------------------------------------------------------
+  TComboBoxHelper = class helper for TComboBox
+    function GetSelectedText: string;
+    procedure SetSelectedText(const AText: string);
+
+    property SelectedText: string read GetSelectedText write SetSelectedText;
   end;
 
 //------------------------------------------------------------------------------
@@ -181,6 +191,12 @@ begin
     if Bit[i] then Result := Result + AH else Result := Result + AL;
     if i > 0 then Result := Result + ASep;
   end;
+end;
+
+//------------------------------------------------------------------------------
+function TByteHelper.ToHex: string;
+begin
+  Result := IntToHex(Self, 2);
 end;
 
 //------------------------------------------------------------------------------
@@ -602,7 +618,7 @@ begin
 end;
 
 //------------------------------------------------------------------------------
-procedure TListViewHelper.SelectObjects(AObjects: IList<TObject>);
+procedure TListViewHelper.SetSelectedObjects(AObjects: IList<TObject>);
 var
   i: Integer;
   AItemObject: TObject;
@@ -666,6 +682,21 @@ begin
 end;
 
 //------------------------------------------------------------------------------
+procedure TStringsHelper.FromList(AList: IList<string>);
+var
+  AElement: string;
+
+begin
+  try
+    BeginUpdate;
+    Clear;
+    for AElement in AList do Add(AElement);
+  finally
+    EndUpdate;
+  end;
+end;
+
+//------------------------------------------------------------------------------
 function TStringsHelper.GetFirstOther(const AText: string): string;
 var
   i: Integer;
@@ -679,6 +710,23 @@ begin
       Break;
     end;
 
+end;
+
+//==============================================================================
+{ TComboBoxHelper }
+
+function TComboBoxHelper.GetSelectedText: string;
+begin
+  if ItemIndex >= 0 then
+    Result := Items[ItemIndex]
+  else
+    Result := '';
+end;
+
+//------------------------------------------------------------------------------
+procedure TComboBoxHelper.SetSelectedText(const AText: string);
+begin
+  ItemIndex := Items.IndexOf(AText);
 end;
 
 end.

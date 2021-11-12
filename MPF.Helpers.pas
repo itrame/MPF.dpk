@@ -123,6 +123,16 @@ type
   end;
 
 //------------------------------------------------------------------------------
+  TTreeNodesHelper = class helper for TTreeNodes
+    function GetExpandedObjects: IList<TObject>;
+    procedure SetExpandedObjects(AObjects: IList<TObject>);
+    function GetSelectedObjects: IList<TObject>;
+    procedure SetSelectedObjects(AObjects: IList<TObject>);
+    procedure ExpandSelected;
+    procedure UnselectAll;
+  end;
+
+//------------------------------------------------------------------------------
 function ToTimeStr(const AHour, AMin: Byte): string;
 
 //==============================================================================
@@ -727,6 +737,93 @@ end;
 procedure TComboBoxHelper.SetSelectedText(const AText: string);
 begin
   ItemIndex := Items.IndexOf(AText);
+end;
+
+//==============================================================================
+{ TTreeNodesHelper }
+
+procedure TTreeNodesHelper.ExpandSelected;
+var
+  ANode: TTreeNode;
+
+begin
+  for ANode in Self do
+    if ANode.Selected then ANode.Expanded := true;
+
+end;
+
+//------------------------------------------------------------------------------
+function TTreeNodesHelper.GetExpandedObjects: IList<TObject>;
+var
+  ANode: TTreeNode;
+  AObject: TObject;
+
+begin
+  Result := TCollections.CreateList<TObject>;
+
+  for ANode in Self do begin
+    if ANode.Data = nil then Continue;
+    if ANode.Expanded then begin
+      AObject := ANode.Data;
+      Result.Add(AObject);
+    end;
+  end;
+
+end;
+
+//------------------------------------------------------------------------------
+procedure TTreeNodesHelper.SetExpandedObjects(AObjects: IList<TObject>);
+var
+  ANode: TTreeNode;
+  AObject: TObject;
+
+begin
+  for ANode in Self do begin
+    if ANode.Data = nil then Continue;
+    AObject := ANode.Data;
+    ANode.Expanded := AObjects.IndexOf(AObject) >= 0;
+  end;
+
+end;
+
+//------------------------------------------------------------------------------
+procedure TTreeNodesHelper.SetSelectedObjects(AObjects: IList<TObject>);
+var
+  ANode: TTreeNode;
+  AObject: TObject;
+
+begin
+  for ANode in Self do begin
+    if ANode.Data = nil then Continue;
+    AObject := ANode.Data;
+    ANode.Selected := AObjects.IndexOf(AObject) >= 0;
+  end;
+
+end;
+
+//------------------------------------------------------------------------------
+procedure TTreeNodesHelper.UnselectAll;
+var
+  ANode: TTreeNode;
+begin
+  for ANode in Self do ANode.Selected := false;
+end;
+
+//------------------------------------------------------------------------------
+function TTreeNodesHelper.GetSelectedObjects: IList<TObject>;
+var
+  ANode: TTreeNode;
+  AObject: TObject;
+
+begin
+  Result := TCollections.CreateList<TObject>;
+  for ANode in Self do
+    if ANode.Selected then
+      if Assigned(ANode.Data) then begin
+        AObject := ANode.Data;
+        Result.Add(AObject);
+      end;
+
 end;
 
 end.

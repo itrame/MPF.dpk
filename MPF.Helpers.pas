@@ -118,8 +118,12 @@ type
   TComboBoxHelper = class helper for TComboBox
     function GetSelectedText: string;
     procedure SetSelectedText(const AText: string);
+    function GetSelectedObject: TObject;
+    procedure SetSelectedObject(const AValue: TObject);
 
     property SelectedText: string read GetSelectedText write SetSelectedText;
+    property SelectedObject: TObject read GetSelectedObject write SetSelectedObject;
+
   end;
 
 //------------------------------------------------------------------------------
@@ -130,6 +134,12 @@ type
     procedure SetSelectedObjects(AObjects: IList<TObject>);
     procedure ExpandSelected;
     procedure UnselectAll;
+  end;
+
+//------------------------------------------------------------------------------
+  TTreeViewHelper = class helper for TTreeView
+    function GetSelectedObject: TObject;
+    function NodeOfData(const AData: Pointer): TTreeNode;
   end;
 
 //------------------------------------------------------------------------------
@@ -725,12 +735,35 @@ end;
 //==============================================================================
 { TComboBoxHelper }
 
+function TComboBoxHelper.GetSelectedObject: TObject;
+begin
+  Result := nil;
+  if (ItemIndex >= 0) and (ItemIndex < Items.Count) then
+    Result := Items.Objects[ItemIndex];
+
+end;
+
+//------------------------------------------------------------------------------
 function TComboBoxHelper.GetSelectedText: string;
 begin
   if ItemIndex >= 0 then
     Result := Items[ItemIndex]
   else
     Result := '';
+end;
+
+//------------------------------------------------------------------------------
+procedure TComboBoxHelper.SetSelectedObject(const AValue: TObject);
+var
+  i: Integer;
+
+begin
+  ItemIndex := -1;
+  for i:=0 to Items.Count-1 do
+    if Items.Objects[i] = AValue then begin
+      ItemIndex := i;
+      Break;
+    end;
 end;
 
 //------------------------------------------------------------------------------
@@ -796,7 +829,10 @@ begin
   for ANode in Self do begin
     if ANode.Data = nil then Continue;
     AObject := ANode.Data;
-    ANode.Selected := AObjects.IndexOf(AObject) >= 0;
+    try
+      ANode.Selected := AObjects.IndexOf(AObject) >= 0;
+    except
+    end;
   end;
 
 end;
@@ -823,6 +859,30 @@ begin
         AObject := ANode.Data;
         Result.Add(AObject);
       end;
+
+end;
+
+//==============================================================================
+{ TTreeViewHelper }
+
+function TTreeViewHelper.GetSelectedObject: TObject;
+begin
+  if Assigned(Selected) then Result := Selected.Data else Result := nil;
+end;
+
+//------------------------------------------------------------------------------
+function TTreeViewHelper.NodeOfData(const AData: Pointer): TTreeNode;
+var
+  ANode: TTreeNode;
+
+begin
+  Result := nil;
+  for ANode in Items do begin
+    if AData = ANode.Data then begin
+      Result := ANode;
+      Break;
+    end;
+  end;
 
 end;
 

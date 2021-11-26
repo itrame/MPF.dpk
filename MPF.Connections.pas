@@ -265,7 +265,7 @@ end;
 //------------------------------------------------------------------------------
 destructor TUDPConnection.Destroy;
 begin
-  Connection.Free;
+  try Connection.Free; except end;
   inherited;
 end;
 

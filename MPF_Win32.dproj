@@ -5,7 +5,7 @@
         <ProjectVersion>18.4</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Package</AppType>
@@ -139,12 +139,12 @@
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="IndySystem.dcp"/>
         <DCCReference Include="IndyCore.dcp"/>
-        <DCCReference Include="CiaComPortPackage.dcp"/>
         <DCCReference Include="Spring.Core.dcp"/>
         <DCCReference Include="ZintPackage.dcp"/>
         <DCCReference Include="TTgPuttyClient.dcp"/>
         <DCCReference Include="vcl.dcp"/>
         <DCCReference Include="DelphiModbus102Tokyo.dcp"/>
+        <DCCReference Include="CiaComPortPackage.dcp"/>
         <DCCReference Include="MPF.Arrays.pas"/>
         <DCCReference Include="MPF.Converters.pas"/>
         <DCCReference Include="MPF.Matrices.pas"/>
@@ -221,6 +221,12 @@
                 </DeployFile>
                 <DeployFile LocalName="$(BDS)\Redist\osx32\libcgsqlite3.dylib" Class="DependencyModule">
                     <Platform Name="OSX32">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\19.0\Bpl\MPF_Win32.bpl" Configuration="Release" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>MPF_Win32.bpl</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

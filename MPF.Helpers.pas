@@ -10,20 +10,33 @@ type
     function GetBit(Index: Byte): Boolean;
     procedure SetBit(Index: Byte; const AValue: Boolean);
     function ToString: string;
-    function Lo: Byte;
-    function Hi: Byte;
+    function GetLo: Byte;
+    procedure SetLo(const AValue: Byte);
+    function GetHi: Byte;
+    procedure SetHi(const AValue: Byte);
     function BCDToInt: Integer;
     function ToBin(const AL, AH: string; const ASep: string = ''): string;
     function IsAsciiDigit: Boolean;
     function ToHex: string;
 
     property Bit[Index: Byte]: Boolean read GetBit write SetBit;
+    property Hi: Byte read GetHi write SetHi;
+    property Lo: Byte read GetLo write SetLo;
 
   end;
 
 //------------------------------------------------------------------------------
+//  TWordHelper = record helper for Word
+//    function Hi: Byte;
+//    function Lo: Byte;
+//    function ToStr: string;
+//    function ToBytes: TBytes;
+//  end;
+
+//------------------------------------------------------------------------------
   TBytesHelper = record helper for TBytes
     function GetWord(const APos: Integer): Word;
+    procedure SetWord(const APos: Integer; const AValue: Word);
     function GetInt16(const APos: Integer): Int16;
     function GetUInt32(const APos: Integer): UInt32;
     function GetUInt64(const APos: Integer): UInt64;
@@ -33,6 +46,8 @@ type
     function ToAnsiStr(const ATerminator: Byte = $00): string;
     function GetSize: UInt32;
     procedure SetSize(const ASize: UInt32);
+    procedure Attach(const AValue: Word); overload;
+    procedure Attach(const AValue: UInt32); overload;
 
     property Size: UInt32 read GetSize write SetSize;
   end;
@@ -47,11 +62,14 @@ type
   TStringHelper = record helper for string
     function DeleteLeading(const AChar: Char): string;
     function DeleteEnding(const AChar: Char): string;
+    function DeleteChar(const AChar: Char): string;
     function ToBool(const ATrueStr, AFalseStr: string; const ADefault: Boolean = False): Boolean;
     function ToInteger: Integer;
     function IsOnlyDigits: Boolean;
     function ToBytes: TBytes;
+    function HexToBytes: TBytes;
     function HexToInt: Integer;
+    function Length: Integer;
   end;
 
 //------------------------------------------------------------------------------
@@ -108,6 +126,9 @@ type
     function ItemOfObject(AObject: TObject): TListItem;
     procedure SetSelectedObjects(AObjects: IList<TObject>);
     function GetSelectedObject: TObject;
+    function AllChecked: Boolean;
+    procedure CheckAll;
+    procedure UncheckAll;
 
     property TopIndex: Integer read GetTopIndex write SetTopIndex;
     property SelectedObject: TObject read GetSelectedObject;
@@ -139,6 +160,7 @@ type
 //------------------------------------------------------------------------------
   TTreeViewHelper = class helper for TTreeView
     function GetSelectedObject: TObject;
+    function GetSelectedObjects: IList<TObject>;
     function NodeOfData(const AData: Pointer): TTreeNode;
   end;
 
@@ -167,7 +189,7 @@ begin
 end;
 
 //------------------------------------------------------------------------------
-function TByteHelper.Hi: Byte;
+function TByteHelper.GetHi: Byte;
 begin
   Result := Self shr 4;
 end;
@@ -179,7 +201,7 @@ begin
 end;
 
 //------------------------------------------------------------------------------
-function TByteHelper.Lo: Byte;
+function TByteHelper.GetLo: Byte;
 begin
   Result := Self and $0F;
 end;
@@ -199,6 +221,19 @@ begin
   else
     Self := Self and (not AMask);
 
+end;
+
+//------------------------------------------------------------------------------
+procedure TByteHelper.SetHi(const AValue: Byte);
+begin
+  Self := Self or ((AValue and $0F) shl 4);
+end;
+
+//------------------------------------------------------------------------------
+procedure TByteHelper.SetLo(const AValue: Byte);
+begin
+
+  Self := Self or (AValue and $0F);
 end;
 
 //------------------------------------------------------------------------------
@@ -228,6 +263,36 @@ end;
 //==============================================================================
 { TBytesHelper }
 
+procedure TBytesHelper.Attach(const AValue: Word);
+var
+  ALByte, AHByte: Byte;
+begin
+  AHByte := AValue shr 8;
+  ALByte := AValue and $00FF;
+  Self := Self + [AHByte, ALByte];
+end;
+
+//------------------------------------------------------------------------------
+procedure TBytesHelper.Attach(const AValue: UInt32);
+var
+  AByte: Byte;
+
+begin
+  AByte := (AValue and $FF000000) shr 24;
+  Self := Self + [AByte];
+
+  AByte := (AValue and $00FF0000) shr 16;
+  Self := Self + [AByte];
+
+  AByte := (AValue and $0000FF00) shr 8;
+  Self := Self + [AByte];
+
+  AByte := AValue and $000000FF;
+  Self := Self + [AByte];
+
+end;
+
+//------------------------------------------------------------------------------
 function TBytesHelper.GetBCD(const APos: Integer): Byte;
 begin
   Result := (Self[APos] shr 4)*10 + (Self[APos] and $0F);
@@ -278,6 +343,13 @@ begin
 end;
 
 //------------------------------------------------------------------------------
+procedure TBytesHelper.SetWord(const APos: Integer; const AValue: Word);
+begin
+  Self[APos] := AValue shr 8;
+  Self[APos+1] := AValue and $00FF;
+end;
+
+//------------------------------------------------------------------------------
 function TBytesHelper.ToAnsiStr(const ATerminator: Byte = $00): string;
 var
   i: Integer;
@@ -314,21 +386,59 @@ end;
 //==============================================================================
 { TStringHelper }
 
+function TStringHelper.DeleteChar(const AChar: Char): string;
+var
+  i: Integer;
+begin
+  Result := '';
+  for i:=1 to Length do
+    if Self[i] = AChar then
+      Continue
+    else
+      Result := Result + Self[i];
+end;
+
+//------------------------------------------------------------------------------
 function TStringHelper.DeleteEnding(const AChar: Char): string;
 begin
   Result := Self;
-  while Length(Result) > 0 do
-    if Self[Length(Result)] = AChar then Delete(Result, Length(Result), 1) else Break;
+  while Length > 0 do
+    if Self[Result.Length] = AChar then Delete(Result, Result.Length, 1) else Break;
 end;
 
 //------------------------------------------------------------------------------
 function TStringHelper.DeleteLeading(const AChar: Char): string;
 begin
   Result := Self;
-  while Length(Result) > 0 do
+  while Result.Length > 0 do
     if Result[1] = AChar then Delete(Result, 1, 1) else Break;
 end;
 
+//------------------------------------------------------------------------------
+function TStringHelper.HexToBytes: TBytes;
+var
+  AByteStr: string;
+  AByteCount, i, AValue: Integer;
+
+begin
+  Result := [];
+  AByteCount := Length div 2;
+
+  if AByteCount > 0 then
+    for i:=0 to AByteCount-1 do begin
+      AByteStr := Self[i*2+1] + Self[i*2+2];
+      AValue := AByteStr.HexToInt;
+
+      if (AValue > 255) or (AValue < 0) then
+        raise Exception.Create('Value: ' + AByteStr + ' out of range.');
+
+      Result := Result + [AValue];
+
+    end;
+
+end;
+
+//------------------------------------------------------------------------------
 function TStringHelper.HexToInt: Integer;
 begin
   Result := StrToInt('$' + Self);
@@ -340,11 +450,17 @@ var
   i: Integer;
 begin
   Result := true;
-  for i:=1 to Length(Self) do
+  for i:=1 to Length do
     if not Self[i].IsDigit then begin
       Result := false;
       Break;
     end;
+end;
+
+//------------------------------------------------------------------------------
+function TStringHelper.Length: Integer;
+begin
+  Result := System.Length(Self);
 end;
 
 //------------------------------------------------------------------------------
@@ -371,7 +487,7 @@ var
   i: Integer;
 begin
   Result := [];
-  for i:=1 to Length(Self) do Result := Result + [Byte(Self[i])];
+  for i:=1 to Length do Result := Result + [Byte(Self[i])];
 end;
 
 //------------------------------------------------------------------------------
@@ -551,6 +667,32 @@ begin
 end;
 
 //------------------------------------------------------------------------------
+function TListViewHelper.AllChecked: Boolean;
+var
+  i: Integer;
+
+begin
+  if Items.Count > 0 then begin
+    Result := true;
+    for i:=0 to Items.Count-1 do
+      if not Items[i].Checked then begin
+        Result := false;
+        Break;
+      end;
+  end else
+    Result := false;
+
+end;
+
+//------------------------------------------------------------------------------
+procedure TListViewHelper.CheckAll;
+var
+  i: Integer;
+begin
+  for i:=0 to Items.Count-1 do Items[i].Checked := true;
+end;
+
+//------------------------------------------------------------------------------
 function TListViewHelper.GetSelectedIndexes: IList<Integer>;
 var
   i: Integer;
@@ -677,6 +819,14 @@ begin
 
   ABottomItem.MakeVisible(true);
 
+end;
+
+//------------------------------------------------------------------------------
+procedure TListViewHelper.UncheckAll;
+var
+  i: Integer;
+begin
+  for i:=0 to Items.Count-1 do Items[i].Checked := false;
 end;
 
 //==============================================================================
@@ -871,6 +1021,17 @@ begin
 end;
 
 //------------------------------------------------------------------------------
+function TTreeViewHelper.GetSelectedObjects: IList<TObject>;
+var
+  AItem: TTreeNode;
+
+begin
+  Result := TCollections.CreateList<TObject>;
+  for AItem in Items do if AItem.Selected then Result.Add(AItem.Data);
+
+end;
+
+//------------------------------------------------------------------------------
 function TTreeViewHelper.NodeOfData(const AData: Pointer): TTreeNode;
 var
   ANode: TTreeNode;
@@ -885,5 +1046,31 @@ begin
   end;
 
 end;
+
+//==============================================================================
+{ TWordHelper }
+
+//function TWordHelper.Hi: Byte;
+//begin
+//  Result := System.Hi(Self);
+//end;
+//
+////------------------------------------------------------------------------------
+//function TWordHelper.Lo: Byte;
+//begin
+//  Result := System.Lo(Self);
+//end;
+//
+////------------------------------------------------------------------------------
+//function TWordHelper.ToBytes: TBytes;
+//begin
+//  Result := [Self.Hi, Self.Lo];
+//end;
+//
+////------------------------------------------------------------------------------
+//function TWordHelper.ToStr: string;
+//begin
+//  Result := IntToStr(Self);
+//end;
 
 end.

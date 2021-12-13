@@ -34,7 +34,7 @@ type
 function NewBoolMatrixRender: IBoolMatrixRender;
 
 //==============================================================================
-implementation uses SysUtils;
+implementation uses SysUtils, Spring.Container;
 
 //==============================================================================
 type
@@ -207,5 +207,9 @@ function NewBoolMatrixRender: IBoolMatrixRender;
 begin
   Result := TBoolMatrixRender.Create;
 end;
+
+//==============================================================================
+initialization
+  GlobalContainer.RegisterType<TBoolMatrixRender>.Implements<IBoolMatrixRender>;
 
 end.

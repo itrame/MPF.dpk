@@ -103,6 +103,7 @@ type
     procedure CopyTo(ADest: IInterface); virtual;
 
   public
+    constructor Create; overload;
     constructor Create(const AWidth, AHeight: Integer); overload;
     constructor Create(AData: TArray<TArray<T>>); overload;
 
@@ -194,6 +195,14 @@ var
 begin
   AComparer := TEqualityComparer<T>.Default;
   Result := CountOf(AItem, AComparer);
+end;
+
+//------------------------------------------------------------------------------
+constructor TMatrixOf<T>.Create;
+begin
+  inherited;
+  SetLength(Items, 1);
+  SetLength(Items[0], 1);
 end;
 
 //------------------------------------------------------------------------------

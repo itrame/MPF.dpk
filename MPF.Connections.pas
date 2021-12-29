@@ -788,7 +788,12 @@ end;
 //==============================================================================
 initialization
   GlobalContainer.RegisterType<TUdpConnection>.
-    Implements<IUdpConnection>;
+    Implements<IUdpConnection>.
+    Implements<INetworkConnection>('MPF UDP Connection');
+
+  GlobalContainer.RegisterType<TTCPConnection>.
+    Implements<ITCPConnection>.
+    Implements<INetworkConnection>('MPF TCP Connection');
 
 
 end.

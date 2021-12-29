@@ -165,6 +165,10 @@ type
   end;
 
 //------------------------------------------------------------------------------
+  TStreamHelper = class helper for TStream
+  end;
+
+//------------------------------------------------------------------------------
 function ToTimeStr(const AHour, AMin: Byte): string;
 
 //==============================================================================
@@ -1048,29 +1052,7 @@ begin
 end;
 
 //==============================================================================
-{ TWordHelper }
+{ TStreamHelper }
 
-//function TWordHelper.Hi: Byte;
-//begin
-//  Result := System.Hi(Self);
-//end;
-//
-////------------------------------------------------------------------------------
-//function TWordHelper.Lo: Byte;
-//begin
-//  Result := System.Lo(Self);
-//end;
-//
-////------------------------------------------------------------------------------
-//function TWordHelper.ToBytes: TBytes;
-//begin
-//  Result := [Self.Hi, Self.Lo];
-//end;
-//
-////------------------------------------------------------------------------------
-//function TWordHelper.ToStr: string;
-//begin
-//  Result := IntToStr(Self);
-//end;
 
 end.

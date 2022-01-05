@@ -9,6 +9,7 @@ type
     function GetItem(Index: Integer): T;
     function GetLast: T;
     function GetFirst: T;
+    function GetEnumerator: IEnumerator<T>;
 
     property MaxCount: Integer read GetMaxCount;
     property Count: Integer read GetCount;
@@ -21,9 +22,7 @@ type
 //------------------------------------------------------------------------------
   IMpfConfigurableQueue<T> = interface(IMpfReadOnlyQueue<T>)['{7A4E7DA1-6932-4A54-90A6-9257D71970EB}']
     procedure SetMaxCount(const AValue: Integer);
-
     property MaxCount: Integer read GetMaxCount write SetMaxCount;
-
   end;
 
 //------------------------------------------------------------------------------
@@ -49,6 +48,7 @@ type
     procedure Clear;
     function GetLast: T;
     function GetFirst: T;
+    function GetEnumerator: IEnumerator<T>;
 
   public
     constructor Create;
@@ -101,6 +101,12 @@ end;
 function TMpfQueue<T>.GetCount: Integer;
 begin
   Result := Items.Count;
+end;
+
+//------------------------------------------------------------------------------
+function TMpfQueue<T>.GetEnumerator: IEnumerator<T>;
+begin
+  Result := Items.GetEnumerator;
 end;
 
 //------------------------------------------------------------------------------

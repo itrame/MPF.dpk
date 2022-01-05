@@ -26,14 +26,6 @@ type
   end;
 
 //------------------------------------------------------------------------------
-//  TWordHelper = record helper for Word
-//    function Hi: Byte;
-//    function Lo: Byte;
-//    function ToStr: string;
-//    function ToBytes: TBytes;
-//  end;
-
-//------------------------------------------------------------------------------
   TBytesHelper = record helper for TBytes
     function GetWord(const APos: Integer): Word;
     procedure SetWord(const APos: Integer; const AValue: Word);
@@ -118,6 +110,7 @@ type
   TListViewHelper = class helper for TListView
     function GetSelectedObjects: IList<TObject>;
     function GetSelectedIndexes: IList<Integer>;
+    function GetCheckedObjects: IList<TObject>;
     function IsFirstSelected: Boolean;
     function IsLastSelected: Boolean;
     function GetTopIndex: Integer;
@@ -125,13 +118,17 @@ type
     procedure SelectObject(AObject: TObject);
     function ItemOfObject(AObject: TObject): TListItem;
     procedure SetSelectedObjects(AObjects: IList<TObject>);
+    procedure SetCheckedObjects(AObjects: IList<TObject>);
     function GetSelectedObject: TObject;
     function AllChecked: Boolean;
     procedure CheckAll;
     procedure UncheckAll;
+    procedure ScrollToLast;
+    function GetLastItem: TListItem;
 
     property TopIndex: Integer read GetTopIndex write SetTopIndex;
     property SelectedObject: TObject read GetSelectedObject;
+    property LastItem: TListItem read GetLastItem;
 
   end;
 
@@ -162,6 +159,7 @@ type
     function GetSelectedObject: TObject;
     function GetSelectedObjects: IList<TObject>;
     function NodeOfData(const AData: Pointer): TTreeNode;
+    property SelectedObject: TObject read GetSelectedObject;
   end;
 
 //------------------------------------------------------------------------------
@@ -697,6 +695,30 @@ begin
 end;
 
 //------------------------------------------------------------------------------
+function TListViewHelper.GetCheckedObjects: IList<TObject>;
+var
+  i: Integer;
+  AItem: TListItem;
+
+begin
+  Result := TCollections.CreateList<TObject>;
+  for i:=0 to Items.Count-1 do begin
+    AItem := Items[i];
+    if AItem.Checked then begin
+      if AItem.Data <> nil then Result.Add(AItem.Data);
+    end;
+  end;
+
+end;
+
+//------------------------------------------------------------------------------
+function TListViewHelper.GetLastItem: TListItem;
+begin
+  if Items.Count > 0 then Result := Items[Items.Count-1]
+                     else Result := nil;
+end;
+
+//------------------------------------------------------------------------------
 function TListViewHelper.GetSelectedIndexes: IList<Integer>;
 var
   i: Integer;
@@ -772,6 +794,12 @@ begin
 end;
 
 //------------------------------------------------------------------------------
+procedure TListViewHelper.ScrollToLast;
+begin
+  if Assigned(LastItem) then LastItem.MakeVisible(false);
+end;
+
+//------------------------------------------------------------------------------
 procedure TListViewHelper.SelectObject(AObject: TObject);
 var
   AItem: TListItem;
@@ -781,6 +809,30 @@ begin
     ItemIndex := AItem.Index
   else
     ItemIndex := -1;
+end;
+
+//------------------------------------------------------------------------------
+procedure TListViewHelper.SetCheckedObjects(AObjects: IList<TObject>);
+var
+  i: Integer;
+  AItemObject: TObject;
+
+begin
+  Items.BeginUpdate;
+  try
+
+    for i:=0 to Items.Count-1 do begin
+      AItemObject := Items[i].Data;
+      try
+        Items[i].Checked := AObjects.IndexOf(AItemObject) >= 0;
+      except
+      end;
+    end;
+
+  finally
+    Items.EndUpdate;
+  end;
+
 end;
 
 //------------------------------------------------------------------------------
@@ -795,7 +847,10 @@ begin
 
     for i:=0 to Items.Count-1 do begin
       AItemObject := Items[i].Data;
-      Items[i].Selected := AObjects.IndexOf(AItemObject) >= 0;
+      try
+        Items[i].Selected := AObjects.IndexOf(AItemObject) >= 0;
+      except
+      end;
     end;
 
   finally

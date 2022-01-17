@@ -125,9 +125,10 @@ type
     procedure UncheckAll;
     procedure ScrollToLast;
     function GetLastItem: TListItem;
+    procedure SetSelectedObject(AObject: TObject);
 
     property TopIndex: Integer read GetTopIndex write SetTopIndex;
-    property SelectedObject: TObject read GetSelectedObject;
+    property SelectedObject: TObject read GetSelectedObject write SetSelectedObject;
     property LastItem: TListItem read GetLastItem;
 
   end;
@@ -159,7 +160,8 @@ type
     function GetSelectedObject: TObject;
     function GetSelectedObjects: IList<TObject>;
     function NodeOfData(const AData: Pointer): TTreeNode;
-    property SelectedObject: TObject read GetSelectedObject;
+    procedure SetSelectedObject(AObject: TObject);
+    property SelectedObject: TObject read GetSelectedObject write SetSelectedObject;
   end;
 
 //------------------------------------------------------------------------------
@@ -836,6 +838,12 @@ begin
 end;
 
 //------------------------------------------------------------------------------
+procedure TListViewHelper.SetSelectedObject(AObject: TObject);
+begin
+  SelectObject(AObject);
+end;
+
+//------------------------------------------------------------------------------
 procedure TListViewHelper.SetSelectedObjects(AObjects: IList<TObject>);
 var
   i: Integer;
@@ -1104,6 +1112,15 @@ begin
     end;
   end;
 
+end;
+
+//------------------------------------------------------------------------------
+procedure TTreeViewHelper.SetSelectedObject(AObject: TObject);
+var
+  ANode: TTreeNode;
+begin
+  ANode := NodeOfData(AObject);
+  if Assigned(ANode) then ANode.Selected := true;
 end;
 
 //==============================================================================

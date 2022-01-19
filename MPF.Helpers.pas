@@ -1,6 +1,6 @@
 unit MPF.Helpers;
 interface uses SysUtils, MPF.Types, Vcl.StdCtrls, Vcl.ComCtrls, Spring.Collections,
-  Classes;
+  Classes, ExtCtrls;
 
 //==============================================================================
 type
@@ -166,6 +166,11 @@ type
 
 //------------------------------------------------------------------------------
   TStreamHelper = class helper for TStream
+  end;
+
+//------------------------------------------------------------------------------
+  TImageHelper = class helper for TImage
+    procedure Clear;
   end;
 
 //------------------------------------------------------------------------------
@@ -1124,7 +1129,14 @@ begin
 end;
 
 //==============================================================================
-{ TStreamHelper }
+{ TImageHelper }
 
+procedure TImageHelper.Clear;
+begin
+  Picture.Bitmap.Width := 1;
+  Picture.Bitmap.Height := 1;
+  Picture.Bitmap.Width := ClientWidth;
+  Picture.Bitmap.Height := ClientHeight;
+end;
 
 end.

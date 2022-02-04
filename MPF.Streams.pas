@@ -8,6 +8,9 @@ type
     function ReadCardinal: Cardinal;
     function GetPosition: Int64;
     function ReadAnsiString8: string;
+    procedure WriteUInt32(const AValue: UInt32);
+    procedure WriteByte(const AValue: Byte);
+    procedure WriteWord(const AValue: Word);
 
     property Position: Int64 read GetPosition;
 
@@ -33,6 +36,9 @@ type
     function ReadCardinal: Cardinal;
     function GetPosition: Int64;
     function ReadAnsiString8: string;
+    procedure WriteUInt32(const AValue: UInt32);
+    procedure WriteByte(const AValue: Byte);
+    procedure WriteWord(const AValue: Word);
 
   public
     constructor Create(const AFileName: string; const AMode: Word); overload;
@@ -117,6 +123,23 @@ begin
   Result := AValue;
 end;
 
+//------------------------------------------------------------------------------
+procedure TmpfStream.WriteByte(const AValue: Byte);
+begin
+  Stream.Write(AValue, 1);
+end;
+
+//------------------------------------------------------------------------------
+procedure TmpfStream.WriteUInt32(const AValue: UInt32);
+begin
+  Stream.Write(AValue, 4);
+end;
+
+//------------------------------------------------------------------------------
+procedure TmpfStream.WriteWord(const AValue: Word);
+begin
+  Stream.Write(AValue, 2);
+end;
 
 //==============================================================================
 { TStreams }

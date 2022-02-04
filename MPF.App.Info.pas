@@ -3,13 +3,13 @@ interface uses MPF.App.Version;
 
 //==============================================================================
 type
-  IMpfAppInfo = interface['{67285492-009A-4321-8D68-A145FE5BDCED}']
+  IAppInfo = interface['{67285492-009A-4321-8D68-A145FE5BDCED}']
     function GetVersion: IMpfApplicationVersion;
     function GetAppName: string;
     procedure SetAppName(const AAppName: string);
-    procedure SetVersion(const AMajor, AMinor, ARelease, ABuild: UInt32; const ACompile: TMpfCompile = Release);
-    procedure SetVersionFromFile(const AFileName: string; const ACompile: TMpfCompile = Release);
-    procedure SetVersionFromExe(const ACompile: TMpfCompile = Release);
+    procedure SetVersion(const AMajor, AMinor, ARelease, ABuild: UInt32; const ACompile: TCompile = Release);
+    procedure SetVersionFromFile(const AFileName: string; const ACompile: TCompile = Release);
+    procedure SetVersionFromExe(const ACompile: TCompile = Release);
     function GetAppNameVer: string;
     function GetAppNameVerSep: string;
     procedure SetAppNameVerSep(const ASep: string);
@@ -33,15 +33,15 @@ implementation uses SysUtils, Spring.Container, Spring.Services,
 
 //==============================================================================
 type
-  TMpfAppInfo = class(TInterfacedObject, IMpfAppInfo)
+  TMpfAppInfo = class(TInterfacedObject, IAppInfo)
   strict private
     Version: IMpfEditableApplicationVersion;
     AppName: string;
     AppNameVerSep: string;
     function GetVersion: IMpfApplicationVersion;
-    procedure SetVersion(const AMajor, AMinor, ARelease, ABuild: UInt32; const ACompile: TMpfCompile = Release);
-    procedure SetVersionFromFile(const AFileName: string; const ACompile: TMpfCompile = Release);
-    procedure SetVersionFromExe(const ACompile: TMpfCompile = Release);
+    procedure SetVersion(const AMajor, AMinor, ARelease, ABuild: UInt32; const ACompile: TCompile = Release);
+    procedure SetVersionFromFile(const AFileName: string; const ACompile: TCompile = Release);
+    procedure SetVersionFromExe(const ACompile: TCompile = Release);
     function GetAppName: string;
     procedure SetAppName(const AAppName: string);
     function GetAppNameVer: string;
@@ -121,7 +121,7 @@ end;
 
 //------------------------------------------------------------------------------
 procedure TMpfAppInfo.SetVersion(const AMajor, AMinor, ARelease,
-  ABuild: UInt32; const ACompile: TMpfCompile);
+  ABuild: UInt32; const ACompile: TCompile);
 begin
   Version.Major := AMajor;
   Version.Minor := AMinor;
@@ -131,14 +131,14 @@ begin
 end;
 
 //------------------------------------------------------------------------------
-procedure TMpfAppInfo.SetVersionFromExe(const ACompile: TMpfCompile);
+procedure TMpfAppInfo.SetVersionFromExe(const ACompile: TCompile);
 begin
   SetVersionFromFile(ParamStr(0), ACompile);
 end;
 
 //------------------------------------------------------------------------------
 procedure TMpfAppInfo.SetVersionFromFile(const AFileName: string;
-  const ACompile: TMpfCompile);
+  const ACompile: TCompile);
 var
   AReader: IMpfFileVersionReader;
   AFileVersion: IMpfVersion;
@@ -152,6 +152,6 @@ end;
 //==============================================================================
 initialization
   GlobalContainer.RegisterType<TMpfAppInfo>.
-    Implements<IMpfAppInfo>;
+    Implements<IAppInfo>;
 
 end.

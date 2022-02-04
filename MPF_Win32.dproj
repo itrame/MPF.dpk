@@ -161,7 +161,7 @@
         <DCCReference Include="Components\MPF.Persistent.pas"/>
         <DCCReference Include="Components\MPF.Observers.pas"/>
         <DCCReference Include="Barcodes\MPF.Barcode.pas"/>
-        <DCCReference Include="Barcodes\MPF.Barcode.EANx.pas"/>
+        <DCCReference Include="Barcodes\MPF.Barcode.EAN.pas"/>
         <DCCReference Include="Barcodes\MPF.Barcode1D.pas"/>
         <DCCReference Include="Components\MPF.CustomSFTPClient.pas"/>
         <DCCReference Include="Components\MPF.SFTPClient.pas"/>
@@ -176,6 +176,10 @@
         <DCCReference Include="MPF.IcpConET7060.pas"/>
         <DCCReference Include="Components\MPF.TouchList.pas"/>
         <DCCReference Include="MPF.TextCtrl.pas"/>
+        <DCCReference Include="MPF.HexToBytes.pas"/>
+        <DCCReference Include="MPF.FileLoader.pas"/>
+        <DCCReference Include="MPF.FileSaver.pas"/>
+        <DCCReference Include="MPF.Filer.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

@@ -3,16 +3,15 @@ interface uses MPF.Barcode, Classes, MPF.Arrays;
 
 //==============================================================================
 type
+  IMpfBarcode1D = interface(IMpfBarcode)['{1B30611A-DF49-4C0F-93A4-71B3E80A4203}']
+    function GetModules: TArray<Boolean>;
+    property Modules: TArray<Boolean> read GetModules;
+  end;
+
+//------------------------------------------------------------------------------
   TMpfBarcode1D = class(TMpfBarcode)
-  private
-    FRow: Integer;
-    function GetModules: IReadOnlyBoolArray;
-    procedure SetRow(const Value: Integer);
   protected
-    property Row: Integer read FRow write SetRow;
-  public
-    constructor Create(AOwner: TComponent); override;
-    property Modules: IReadOnlyBoolArray read GetModules;
+    function GetModules: TArray<Boolean>;
   end;
 
 //==============================================================================
@@ -21,36 +20,13 @@ implementation
 //==============================================================================
 { TMpfBarcode1D }
 
-constructor TMpfBarcode1D.Create(AOwner: TComponent);
-begin
-  inherited;
-  FRow := 0;
-end;
-
-
-function TMpfBarcode1D.GetModules: IReadOnlyBoolArray;
+function TMpfBarcode1D.GetModules: TArray<Boolean>;
 var
   i: Integer;
-  AModule: Boolean;
-  AModules: TArray<Boolean>;
 begin
-//  Encode;
-  AModules := [];
-  for i:=0 to SymbolWidth-1 do begin
-    AModule := GetModule(i, FRow);
-    AModules := AModules + [AModule];
-  end;
-  Result := TArrays.NewBoolArray(AModules);
+  Result := [];
+  for i:=0 to Symbol.Width-1 do
+    Result := Result + [Symbol[i,0]];
 end;
-
-
-procedure TMpfBarcode1D.SetRow(const Value: Integer);
-begin
-  if FRow = Value then Exit;
-  if FRow < 0 then begin FRow := 0; Exit end;
-  if FRow >= SymbolHeight then begin FRow := SymbolHeight - 1; Exit; end;
-  FRow := Value;
-end;
-
 
 end.

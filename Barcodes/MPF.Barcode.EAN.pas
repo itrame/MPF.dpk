@@ -1,34 +1,35 @@
-unit MPF.Barcode.EANx;
+unit MPF.Barcode.EAN;
 interface uses System.SysUtils, System.Classes, MPF.Barcode1D;
 
 //==============================================================================
 type
-  TMpfEANx = class(TMpfBarcode1D)
-  protected
-    function ValidateContent(const AContent: string): Boolean; override;
-  public
-    constructor Create(AOwner: TComponent); override;
+  IMpfEANCoder = interface(IMpfBarcode1D)['{E0CC9E86-2F24-459B-AB14-EA812660F5A9}']
   end;
 
 //==============================================================================
-procedure Register;
+implementation uses zint, zint_common, MPF.Helpers, Spring.Container;
 
 //==============================================================================
-implementation uses zint, zint_common, MPF.Helpers;
+type
+  TMpfEANCoder = class(TMpfBarcode1D, IMpfEANCoder)
+  protected
+    function ValidateContent(const AContent: string): Boolean; override;
+  public
+    constructor Create;
+  end;
 
 //==============================================================================
-{ TMpfEANxCoder }
+{ TMpfEANCoder }
 
-constructor TMpfEANx.Create(AOwner: TComponent);
+constructor TMpfEANCoder.Create;
 begin
   inherited;
   Symbology := zsEANx;
   Content := '123456789012';
-  Row := 0;
 end;
 
 //------------------------------------------------------------------------------
-function TMpfEANx.ValidateContent(const AContent: string): Boolean;
+function TMpfEANCoder.ValidateContent(const AContent: string): Boolean;
 begin
   if AContent = '' then
     raise Exception.Create('EANx Content can not be empty.');
@@ -40,11 +41,11 @@ begin
     raise Exception.Create('EANx Content should has only digits.');
 
   Result := true;
+
 end;
 
 //==============================================================================
-procedure Register;
-begin
-  RegisterComponents('MPF', [TMpfEANx]);
-end;
+initialization
+  GlobalContainer.RegisterType<TMpfEANCoder>.Implements<IMpfEANCoder>;
+
 end.

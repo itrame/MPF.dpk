@@ -10,21 +10,21 @@ package MPF_Win32;
 {$EXTENDEDSYNTAX ON}
 {$IMPORTEDDATA ON}
 {$IOCHECKS ON}
-{$LOCALSYMBOLS ON}
+{$LOCALSYMBOLS OFF}
 {$LONGSTRINGS ON}
 {$OPENSTRINGS ON}
-{$OPTIMIZATION OFF}
+{$OPTIMIZATION ON}
 {$OVERFLOWCHECKS OFF}
 {$RANGECHECKS OFF}
-{$REFERENCEINFO ON}
+{$REFERENCEINFO OFF}
 {$SAFEDIVIDE OFF}
-{$STACKFRAMES ON}
+{$STACKFRAMES OFF}
 {$TYPEDADDRESS OFF}
 {$VARSTRINGCHECKS ON}
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$DEFINE DEBUG}
+{$DEFINE RELEASE}
 {$ENDIF IMPLICITBUILDING}
 {$IMPLICITBUILD ON}
 
@@ -56,7 +56,7 @@ contains
   MPF.Persistent in 'Components\MPF.Persistent.pas',
   MPF.Observers in 'Components\MPF.Observers.pas',
   MPF.Barcode in 'Barcodes\MPF.Barcode.pas',
-  MPF.Barcode.EANx in 'Barcodes\MPF.Barcode.EANx.pas',
+  MPF.Barcode.EAN in 'Barcodes\MPF.Barcode.EAN.pas',
   MPF.Barcode1D in 'Barcodes\MPF.Barcode1D.pas',
   MPF.CustomSFTPClient in 'Components\MPF.CustomSFTPClient.pas',
   MPF.SFTPClient in 'Components\MPF.SFTPClient.pas',
@@ -70,6 +70,10 @@ contains
   MPF.Enumerators in 'MPF.Enumerators.pas',
   MPF.IcpConET7060 in 'MPF.IcpConET7060.pas',
   MPF.TouchList in 'Components\MPF.TouchList.pas',
-  MPF.TextCtrl in 'MPF.TextCtrl.pas';
+  MPF.TextCtrl in 'MPF.TextCtrl.pas',
+  MPF.HexToBytes in 'MPF.HexToBytes.pas',
+  MPF.FileLoader in 'MPF.FileLoader.pas',
+  MPF.FileSaver in 'MPF.FileSaver.pas',
+  MPF.Filer in 'MPF.Filer.pas';
 
 end.

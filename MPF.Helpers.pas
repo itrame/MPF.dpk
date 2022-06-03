@@ -126,10 +126,12 @@ type
     procedure ScrollToLast;
     function GetLastItem: TListItem;
     procedure SetSelectedObject(AObject: TObject);
+    function GetSelectedCaption: string;
 
     property TopIndex: Integer read GetTopIndex write SetTopIndex;
     property SelectedObject: TObject read GetSelectedObject write SetSelectedObject;
     property LastItem: TListItem read GetLastItem;
+    property SelectedCaption: string read GetSelectedCaption;
 
   end;
 
@@ -723,6 +725,16 @@ function TListViewHelper.GetLastItem: TListItem;
 begin
   if Items.Count > 0 then Result := Items[Items.Count-1]
                      else Result := nil;
+end;
+
+//------------------------------------------------------------------------------
+function TListViewHelper.GetSelectedCaption: string;
+var
+  AItem: TListItem;
+begin
+  Result := '';
+  AItem := Self.Selected;
+  if Assigned(AItem) then Result := AItem.Caption;
 end;
 
 //------------------------------------------------------------------------------

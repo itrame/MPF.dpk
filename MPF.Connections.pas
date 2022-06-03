@@ -53,10 +53,12 @@ type
     procedure SetPort(const APort: Byte);
     function GetBaudrate: Integer;
     procedure SetBaudrate(const ABaudrate: Integer);
+    function GetRxCount: Integer;
 
     property Opened: Boolean read IsOpened;
     property Port: Byte read GetPort write SetPort;
     property Baudrate: Integer read GetBaudrate write SetBaudrate;
+    property RxCount: Integer read GetRxCount;
 
   end;
 
@@ -155,11 +157,13 @@ type
     function ReadFromBuffer(const ACount: Integer): TBytes;
     procedure Wait(ATimer: TTimer);
     function Clone: IConnection;
+    function GetRxCount: Integer;
+    procedure CopyTo(ADest: TComConnection);
 
   public
-    constructor Create; overload;
-    constructor Create(const APort: Byte; const ABaudrate: Integer;
-      const AReadTimeout: Integer = 2000); overload;
+    constructor Create;
+//    constructor Create(const APort: Byte; const ABaudrate: Integer;
+//      const AReadTimeout: Integer = 2000); overload;
     destructor Destroy; override;
 
   end;
@@ -346,72 +350,16 @@ begin
 end;
 
 //==============================================================================
-{ TConnections }
-
-//class function TConnections.NewUDP: IUDPConnection;
-//begin
-//  Result := TUDPConnection.Create;
-//end;
-//
-////------------------------------------------------------------------------------
-//class function TConnections.NewUDP(AOwner: TComponent): IUDPConnection;
-//begin
-//  Result := TUDPConnection.Create(AOwner);
-//end;
-//
-////------------------------------------------------------------------------------
-//class function TConnections.NewUDP(const AAddr: string; const APort: Word;
-//  const AReadTimeout: Integer = 2000): IUDPConnection;
-//begin
-//  Result := TUDPConnection.Create(AAddr, APort, AReadTimeout);
-//end;
-//
-////------------------------------------------------------------------------------
-//class function TConnections.NewUDP(AOwner: TComponent; const AAddr: string;
-//  const APort: Word; const AReadTimeout: Integer): IUDPConnection;
-//begin
-//  Result := TUDPConnection.Create(AOwner, AAddr, APort, AReadTimeout);
-//end;
-//
-////------------------------------------------------------------------------------
-//class function TConnections.NewTCP(const AAddr: string; const APort: Word;
-//  const AReadTimeout: Integer): ITCPConnection;
-//begin
-//  Result := TTCPConnection.Create(AAddr, APort, AReadTimeout);
-//end;
-//
-////------------------------------------------------------------------------------
-//class function TConnections.NewTCP: ITCPConnection;
-//begin
-//  Result := TTCPConnection.Create;
-//end;
-//
-////------------------------------------------------------------------------------
-//{$IFDEF MSWINDOWS}
-//
-//class function TConnections.NewCOM: ICOMConnection;
-//begin
-//  Result := TCOMConnection.Create;
-//end;
-//
-//
-//class function TConnections.NewCOM(const APort: Byte; const ABaudrate,
-//  AReadTimeout: Integer): ICOMConnection;
-//begin
-//  Result := TCOMConnection.Create(APort, ABaudrate, AReadTimeout);
-//end;
-//
-//
-//
-//{$ENDIF}
-
-//==============================================================================
 { TCOMConnection }
 {$IFDEF MSWINDOWS}
 
 function TCOMConnection.Clone: IConnection;
+var
+  ACopy: TComConnection;
 begin
-  Result := TCOMConnection.Create(GetPort, GetBaudrate, GetReadTimeout);
+  ACopy := TCOMConnection.Create;
+  CopyTo(ACopy);
+  Result := ACopy;
 end;
 
 //------------------------------------------------------------------------------
@@ -436,13 +384,11 @@ begin
 end;
 
 //------------------------------------------------------------------------------
-constructor TCOMConnection.Create(const APort: Byte; const ABaudrate,
-  AReadTimeout: Integer);
+procedure TCOMConnection.CopyTo(ADest: TComConnection);
 begin
-  Create;
-  Connection.Port := APort;
-  Connection.Baudrate := ABaudrate;
-  RxTimer.Interval := AReadTimeout;
+  ADest.SetPort( GetPort );
+  ADest.SetBaudrate( GetBaudrate );
+  ADest.SetReadTimeout( GetReadTimeout );
 end;
 
 //------------------------------------------------------------------------------
@@ -459,6 +405,7 @@ begin
   inherited;
   Connection := TCiaComPort.Create(nil);
   Connection.OnDataAvailable := ConnectionDataAvailable;
+  Connection.StopBits := sbTwo;
   RxTimer := TTimer.Create(nil);
   RxTimer.Enabled := false;
   RxTimer.OnTimer := RxTimeout;
@@ -481,6 +428,12 @@ end;
 function TCOMConnection.GetReadTimeout: Integer;
 begin
   Result := Connection.RxTimeout;
+end;
+
+//------------------------------------------------------------------------------
+function TCOMConnection.GetRxCount: Integer;
+begin
+  Result := Length(RxData);
 end;
 
 //------------------------------------------------------------------------------
@@ -781,7 +734,10 @@ end;
 function NewCOM(const APort: Byte; const ABaudrate: Integer;
       const AReadTimeout: Integer = 2000): ICOMConnection;
 begin
-  Result := TCOMConnection.Create(APort, ABaudrate, AReadTimeout);
+  Result := TCOMConnection.Create;
+  Result.Port := APort;
+  Result.Baudrate := ABaudrate;
+  Result.ReadTimeout := AReadTimeout;
 end;
 
 {$ENDIF}
@@ -794,6 +750,8 @@ initialization
   GlobalContainer.RegisterType<TTCPConnection>.
     Implements<ITCPConnection>.
     Implements<INetworkConnection>('MPF TCP Connection');
+
+  GlobalContainer.RegisterType<TCOMConnection>.Implements<ICOMConnection>;
 
 
 end.

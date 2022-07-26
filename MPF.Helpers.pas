@@ -6,6 +6,7 @@ interface uses SysUtils, MPF.Types, Vcl.StdCtrls, Vcl.ComCtrls, Spring.Collectio
 type
   TBoolArray = TArray<Boolean>;
 
+//------------------------------------------------------------------------------
   TByteHelper = record helper for Byte
     function GetBit(Index: Byte): Boolean;
     procedure SetBit(Index: Byte; const AValue: Boolean);

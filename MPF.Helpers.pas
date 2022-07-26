@@ -62,6 +62,8 @@ type
     function HexToBytes: TBytes;
     function HexToInt: Integer;
     function Length: Integer;
+    function FirstChar: Char;
+    function LastChar: Char;
   end;
 
 //------------------------------------------------------------------------------
@@ -426,6 +428,12 @@ begin
 end;
 
 //------------------------------------------------------------------------------
+function TStringHelper.FirstChar: Char;
+begin
+  Result := Self[1];
+end;
+
+//------------------------------------------------------------------------------
 function TStringHelper.HexToBytes: TBytes;
 var
   AByteStr: string;
@@ -466,6 +474,12 @@ begin
       Result := false;
       Break;
     end;
+end;
+
+//------------------------------------------------------------------------------
+function TStringHelper.LastChar: Char;
+begin
+  Result := Self[Self.Length];
 end;
 
 //------------------------------------------------------------------------------
